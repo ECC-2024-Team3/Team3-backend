@@ -26,7 +26,7 @@ public class PostDTO {
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
 
-    // ✅ 기존 `Post`만을 매개변수로 받는 생성자 => 
+    // ✅ 기존 `Post`만을 매개변수로 받는 생성자 => create, update에서 사용
     public PostDTO(Post post) {
         this.post_id = post.getPost_id();
         this.user_id = post.getUser().getUser_id();
@@ -44,7 +44,7 @@ public class PostDTO {
         this.updated_at = post.getUpdated_at();
     }
 
-    // ✅ `liked`, `bookmarked`, `likesCount`, `bookmarksCount` 포함하는 생성자 유지
+    // ✅ `liked`, `bookmarked`, `likesCount`, `bookmarksCount` 포함하는 생성자 => read, search에서 사용
     public PostDTO(Post post, boolean liked, boolean bookmarked, int likesCount, int bookmarksCount) {
         this.post_id = post.getPost_id();
         this.user_id = post.getUser().getUser_id();
