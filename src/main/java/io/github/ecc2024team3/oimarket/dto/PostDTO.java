@@ -21,12 +21,12 @@ public class PostDTO {
     private String representative_image;
     private int likes_count;
     private int bookmarks_count;
-    private boolean liked; 
+    private boolean liked;
     private boolean bookmarked;
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
 
-    // ✅ Post 엔티티 → PostDTO 변환
+    // ✅ 기존 `Post`만을 매개변수로 받는 생성자 => 
     public PostDTO(Post post) {
         this.post_id = post.getPost_id();
         this.user_id = post.getUser().getUser_id();
@@ -35,6 +35,29 @@ public class PostDTO {
         this.price = post.getPrice();
         this.transaction_status = post.getTransaction_status();
         this.content = post.getContent();
+        this.representative_image = post.getImages().isEmpty() ? null : post.getImages().get(0).getImage_url();
+        this.likes_count = 0;
+        this.bookmarks_count = 0;
+        this.liked = false;
+        this.bookmarked = false;
+        this.created_at = post.getCreated_at();
+        this.updated_at = post.getUpdated_at();
+    }
+
+    // ✅ `liked`, `bookmarked`, `likesCount`, `bookmarksCount` 포함하는 생성자 유지
+    public PostDTO(Post post, boolean liked, boolean bookmarked, int likesCount, int bookmarksCount) {
+        this.post_id = post.getPost_id();
+        this.user_id = post.getUser().getUser_id();
+        this.title = post.getTitle();
+        this.location = post.getLocation();
+        this.price = post.getPrice();
+        this.transaction_status = post.getTransaction_status();
+        this.content = post.getContent();
+        this.representative_image = post.getImages().isEmpty() ? null : post.getImages().get(0).getImage_url();
+        this.likes_count = likesCount;
+        this.bookmarks_count = bookmarksCount;
+        this.liked = liked;
+        this.bookmarked = bookmarked;
         this.created_at = post.getCreated_at();
         this.updated_at = post.getUpdated_at();
     }

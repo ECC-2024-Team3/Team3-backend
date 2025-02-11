@@ -43,26 +43,16 @@ public class PostService {
 
     // ✅ 전체 게시글 조회 (Read - 모든 게시글)
     @Transactional(readOnly = true)
-    public List<PostDTO> getAllPosts() {
+    public List<PostDTO> getAllPosts(Long user_id) {
         List<Post> posts = postRepository.findAll();
-
+    
         return posts.stream().map(post -> {
-            String representativeImage = post.getImages().isEmpty() ? null : post.getImages().get(0).getImage_url();
-
-            return PostDTO.builder()
-                    .post_id(post.getPost_id())
-                    .user_id(post.getUser().getUser_id())
-                    .title(post.getTitle())
-                    .location(post.getLocation())
-                    .price(post.getPrice())
-                    .transaction_status(post.getTransaction_status())
-                    .content(post.getContent())
-                    .representative_image(representativeImage)
-                    .likes_count(likeRepository.countByPost_PostId(post.getPost_id()))
-                    .bookmarks_count(bookmarkRepository.countByPost_PostId(post.getPost_id()))
-                    .created_at(post.getCreated_at())
-                    .updated_at(post.getUpdated_at())
-                    .build();
+            boolean liked = likeRepository.existsByUser_UserIdAndPost_PostId(user_id, post.getPost_id());
+            boolean bookmarked = bookmarkRepository.existsByUser_UserIdAndPost_PostId(user_id, post.getPost_id());
+            int likesCount = likeRepository.countByPost_PostId(post.getPost_id());
+            int bookmarksCount = bookmarkRepository.countByPost_PostId(post.getPost_id());
+    
+            return new PostDTO(post, liked, bookmarked, likesCount, bookmarksCount); // ✅ PostDTO 변환 로직 간결화
         }).collect(Collectors.toList());
     }
 
@@ -134,7 +124,7 @@ public class PostService {
 
     // ✅ 검색 기능 추가
     @Transactional(readOnly = true)
-    public List<PostDTO> searchPosts(PostSearchDTO searchDTO) {
+    public List<PostDTO> searchPosts(PostSearchDTO searchDTO, Long user_id) {
         List<Post> posts = postRepository.searchPosts(
                 searchDTO.getKeyword(),
                 searchDTO.getTransaction_status(),
@@ -142,19 +132,14 @@ public class PostService {
                 searchDTO.getMin_price(),
                 searchDTO.getMax_price()
         );
-
-        return posts.stream().map(post -> PostDTO.builder()
-                .post_id(post.getPost_id())
-                .user_id(post.getUser().getUser_id())
-                .title(post.getTitle())
-                .location(post.getLocation())
-                .price(post.getPrice())
-                .transaction_status(post.getTransaction_status())
-                .content(post.getContent())
-                .likes_count(0)  // 기본값 설정, 실제 값은 좋아요 기능에서 따로 가져옴
-                .bookmarks_count(0)  // 기본값 설정
-                .created_at(post.getCreated_at())
-                .updated_at(post.getUpdated_at())
-                .build()).collect(Collectors.toList());
+    
+        return posts.stream().map(post -> {
+            boolean liked = likeRepository.existsByUser_UserIdAndPost_PostId(user_id, post.getPost_id());
+            boolean bookmarked = bookmarkRepository.existsByUser_UserIdAndPost_PostId(user_id, post.getPost_id());
+            int likesCount = likeRepository.countByPost_PostId(post.getPost_id());
+            int bookmarksCount = bookmarkRepository.countByPost_PostId(post.getPost_id());
+    
+            return new PostDTO(post, liked, bookmarked, likesCount, bookmarksCount); // ✅ PostDTO 변환 로직 간결화
+        }).collect(Collectors.toList());
     }
 }

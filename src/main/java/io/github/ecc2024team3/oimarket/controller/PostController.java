@@ -27,10 +27,11 @@ public class PostController {
         return ResponseEntity.ok(postService.createPost(postCreateDTO, user_id));
     }
 
-    // ✅ 전체 게시글 조회 (GET /api/posts)
+
+    // ✅ 전체 게시글 조회 (로그인한 사용자 ID 포함(좋아요/북마크 여부 확인을 위함))
     @GetMapping
-    public ResponseEntity<List<PostDTO>> getAllPosts() {
-        return ResponseEntity.ok(postService.getAllPosts());
+    public ResponseEntity<List<PostDTO>> getAllPosts(@RequestParam Long user_id) {
+        return ResponseEntity.ok(postService.getAllPosts(user_id));
     }
 
     // ✅ 개별 게시글 조회 (GET /api/posts/{post_id})
@@ -56,9 +57,10 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
-    // ✅ 검색 기능 (GET /api/posts/search)
+    // ✅ 검색 기능 (로그인한 사용자 ID 포함(좋아요/북마크 여부 확인을 위함))
     @GetMapping("/search")
     public ResponseEntity<List<PostDTO>> searchPosts(
+            @RequestParam Long user_id,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String transaction_status,
             @RequestParam(required = false) String location,
@@ -73,6 +75,6 @@ public class PostController {
                 .max_price(max_price)
                 .build();
 
-        return ResponseEntity.ok(postService.searchPosts(searchDTO));
+        return ResponseEntity.ok(postService.searchPosts(searchDTO, user_id));
     }
 }
