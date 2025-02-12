@@ -5,6 +5,7 @@ import io.github.ecc2024team3.oimarket.dto.PostSearchDTO;
 import io.github.ecc2024team3.oimarket.dto.PostCreateDTO;
 import io.github.ecc2024team3.oimarket.dto.PostUpdateDTO;
 import io.github.ecc2024team3.oimarket.entity.Post;
+import io.github.ecc2024team3.oimarket.entity.TransactionStatus;
 import io.github.ecc2024team3.oimarket.entity.User;
 import io.github.ecc2024team3.oimarket.repository.PostRepository;
 import io.github.ecc2024team3.oimarket.repository.LikeRepository;
@@ -36,6 +37,10 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         Post post = new Post(postDTO, user);
+        
+        // ✅ ENUM으로 변환
+        post.setTransaction_status(TransactionStatus.valueOf(postDTO.getTransaction_status())); 
+        
         postRepository.save(post);
 
         return new PostDTO(post);
@@ -75,7 +80,7 @@ public class PostService {
                 .title(post.getTitle())
                 .location(post.getLocation())
                 .price(post.getPrice())
-                .transaction_status(post.getTransaction_status())
+                .transaction_status(post.getTransaction_status().name())
                 .content(post.getContent())
                 .representative_image(representativeImage)
                 .likes_count(likesCount)
@@ -97,11 +102,9 @@ public class PostService {
             throw new RuntimeException("게시글을 수정할 권한이 없습니다.");
         }
 
-        if (postUpdateDTO.getTitle() != null) post.setTitle(postUpdateDTO.getTitle());
-        if (postUpdateDTO.getLocation() != null) post.setLocation(postUpdateDTO.getLocation());
-        if (postUpdateDTO.getPrice() != null) post.setPrice(postUpdateDTO.getPrice());
-        if (postUpdateDTO.getTransaction_status() != null) post.setTransaction_status(postUpdateDTO.getTransaction_status());
-        if (postUpdateDTO.getContent() != null) post.setContent(postUpdateDTO.getContent());
+        if (postUpdateDTO.getTransaction_status() != null) {
+            post.setTransaction_status(TransactionStatus.valueOf(postUpdateDTO.getTransaction_status()));  // ✅ ENUM 변환
+        }
 
         post.setUpdated_at(java.time.LocalDateTime.now());
         postRepository.save(post);
@@ -139,7 +142,7 @@ public class PostService {
             int likesCount = likeRepository.countByPost_PostId(post.getPost_id());
             int bookmarksCount = bookmarkRepository.countByPost_PostId(post.getPost_id());
     
-            return new PostDTO(post, liked, bookmarked, likesCount, bookmarksCount); // ✅ PostDTO 변환 로직 간결화
+            return new PostDTO(post, liked, bookmarked, likesCount, bookmarksCount);
         }).collect(Collectors.toList());
     }
 }

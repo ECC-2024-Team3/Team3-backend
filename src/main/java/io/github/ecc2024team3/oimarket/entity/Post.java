@@ -28,7 +28,8 @@ public class Post {
     private Integer price;
     
     @Enumerated(EnumType.STRING)
-    private String transaction_status;
+    @Column(nullable = false)
+    private TransactionStatus transaction_status;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -46,7 +47,7 @@ public class Post {
         this.title = postDTO.getTitle();
         this.location = postDTO.getLocation();
         this.price = postDTO.getPrice();
-        this.transaction_status = postDTO.getTransaction_status();
+        this.transaction_status = TransactionStatus.valueOf(postDTO.getTransaction_status());;
         this.content = postDTO.getContent();
         this.created_at = LocalDateTime.now();
     }

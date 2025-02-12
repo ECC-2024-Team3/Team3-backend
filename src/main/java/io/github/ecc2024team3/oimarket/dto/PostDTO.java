@@ -33,7 +33,7 @@ public class PostDTO {
         this.title = post.getTitle();
         this.location = post.getLocation();
         this.price = post.getPrice();
-        this.transaction_status = post.getTransaction_status();
+        this.transaction_status = post.getTransaction_status().name();
         this.content = post.getContent();
         this.representative_image = post.getImages().isEmpty() ? null : post.getImages().get(0).getImage_url();
         this.likes_count = 0;
@@ -44,14 +44,14 @@ public class PostDTO {
         this.updated_at = post.getUpdated_at();
     }
 
-    // ✅ `liked`, `bookmarked`, `likesCount`, `bookmarksCount` 포함하는 생성자 => read, search에서 사용
+    // ✅ `liked`, `bookmarked`, `likesCount`, `bookmarksCount` 포함하는 생성자 => read, se
     public PostDTO(Post post, boolean liked, boolean bookmarked, int likesCount, int bookmarksCount) {
         this.post_id = post.getPost_id();
         this.user_id = post.getUser().getUser_id();
         this.title = post.getTitle();
         this.location = post.getLocation();
         this.price = post.getPrice();
-        this.transaction_status = post.getTransaction_status();
+        this.transaction_status = post.getTransaction_status().name();
         this.content = post.getContent();
         this.representative_image = post.getImages().isEmpty() ? null : post.getImages().get(0).getImage_url();
         this.likes_count = likesCount;
