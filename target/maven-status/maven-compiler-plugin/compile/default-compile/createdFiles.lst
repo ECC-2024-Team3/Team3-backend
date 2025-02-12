@@ -1,0 +1,8 @@
+io/github/ecc2024team3/oimarket/controller/PostController.class
+io/github/ecc2024team3/oimarket/entity/Post.class
+io/github/ecc2024team3/oimarket/service/PostService.class
+io/github/ecc2024team3/oimarket/OimarketApplication.class
+io/github/ecc2024team3/oimarket/entity/Post$PostBuilder.class
+io/github/ecc2024team3/oimarket/dto/PostDTO.class
+io/github/ecc2024team3/oimarket/repository/PostRepository.class
+io/github/ecc2024team3/oimarket/dto/PostDTO$PostDTOBuilder.class
