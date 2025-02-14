@@ -32,4 +32,4 @@ jobs:
         run: |
           pip install awsebcli --upgrade --user
           eb init -r $AWS_REGION -p corretto-21 $AWS_EB_APP_NAME
-          eb deploy $AWS_EB_ENV_NAME
+          eb deploy $AWS_EB_ENV_NAME --message "Stable Deployment $(date +'%Y-%m-%d %H:%M:%S')"
