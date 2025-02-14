@@ -31,5 +31,5 @@ jobs:
           AWS_EB_APP_NAME: ${{ secrets.AWS_EB_APP_NAME }}
         run: |
           pip install awsebcli --upgrade --user
-          eb init -r $AWS_REGION -p java-21 $AWS_EB_APP_NAME
+          eb init -r $AWS_REGION -p corretto-21 $AWS_EB_APP_NAME
           eb deploy $AWS_EB_ENV_NAME
