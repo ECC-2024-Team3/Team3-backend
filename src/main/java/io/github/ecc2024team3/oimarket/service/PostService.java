@@ -32,81 +32,79 @@ public class PostService {
 
     // ✅ 게시글 생성 (Create)
     @Transactional
-    public PostDTO createPost(PostCreateDTO postDTO, Long user_id) {
-        User user = userRepository.findById(user_id)
+    public PostDTO createPost(PostCreateDTO postDTO, Long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         Post post = new Post(postDTO, user);
-        
-        // ✅ ENUM으로 변환
-        post.setTransaction_status(TransactionStatus.valueOf(postDTO.getTransaction_status())); 
-        
-        postRepository.save(post);
+        post.setTransactionStatus(TransactionStatus.valueOf(postDTO.getTransactionStatus())); // ✅ ENUM 변환
 
+        postRepository.save(post);
         return new PostDTO(post);
     }
 
     // ✅ 전체 게시글 조회 (Read - 모든 게시글)
     @Transactional(readOnly = true)
-    public List<PostDTO> getAllPosts(Long user_id) {
+    public List<PostDTO> getAllPosts(Long userId) {
         List<Post> posts = postRepository.findAll();
-    
+
         return posts.stream().map(post -> {
-            boolean liked = likeRepository.existsByUser_UserIdAndPost_PostId(user_id, post.getPost_id());
-            boolean bookmarked = bookmarkRepository.existsByUser_UserIdAndPost_PostId(user_id, post.getPost_id());
-            int likesCount = likeRepository.countByPost_PostId(post.getPost_id());
-            int bookmarksCount = bookmarkRepository.countByPost_PostId(post.getPost_id());
-    
-            return new PostDTO(post, liked, bookmarked, likesCount, bookmarksCount); // ✅ PostDTO 변환 로직 간결화
+            boolean liked = likeRepository.existsByUser_UserIdAndPost_PostId(userId, post.getPostId());
+            boolean bookmarked = bookmarkRepository.existsByUser_UserIdAndPost_PostId(userId, post.getPostId());
+            int likesCount = likeRepository.countByPost_PostId(post.getPostId());
+            int bookmarksCount = bookmarkRepository.countByPost_PostId(post.getPostId());            
+
+            return new PostDTO(post, liked, bookmarked, likesCount, bookmarksCount);
         }).collect(Collectors.toList());
     }
 
     // ✅ 개별 게시글 조회 (Read - 특정 게시글)
     @Transactional(readOnly = true)
-    public PostDTO getPostById(Long post_id, Long user_id) {
-        Post post = postRepository.findById(post_id)
+    public PostDTO getPostById(Long postId, Long userId) {
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
 
-        int likesCount = likeRepository.countByPost_PostId(post_id);
-        int bookmarksCount = bookmarkRepository.countByPost_PostId(post_id);
-        boolean liked = likeRepository.existsByUser_UserIdAndPost_PostId(user_id, post_id);
-        boolean bookmarked = bookmarkRepository.existsByUser_UserIdAndPost_PostId(user_id, post_id);
+            int likesCount = likeRepository.countByPost_PostId(postId);
+            int bookmarksCount = bookmarkRepository.countByPost_PostId(postId);
+            boolean liked = likeRepository.existsByUser_UserIdAndPost_PostId(userId, postId);
+            boolean bookmarked = bookmarkRepository.existsByUser_UserIdAndPost_PostId(userId, postId);
+                
 
-        String representativeImage = post.getImages().isEmpty() ? null : post.getImages().get(0).getImage_url();
+        String representativeImage = post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl();
 
         return PostDTO.builder()
-                .post_id(post.getPost_id())
-                .user_id(post.getUser().getUser_id())
+                .postId(post.getPostId())
+                .userId(post.getUser().getUserId())
                 .title(post.getTitle())
                 .location(post.getLocation())
                 .price(post.getPrice())
-                .transaction_status(post.getTransaction_status().name())
+                .transactionStatus(post.getTransactionStatus().name())
                 .content(post.getContent())
-                .representative_image(representativeImage)
-                .likes_count(likesCount)
-                .bookmarks_count(bookmarksCount)
+                .representativeImage(representativeImage)
+                .likesCount(likesCount)
+                .bookmarksCount(bookmarksCount)
                 .liked(liked)
                 .bookmarked(bookmarked)
-                .created_at(post.getCreated_at())
-                .updated_at(post.getUpdated_at())
+                .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
                 .build();
     }
 
     // ✅ 게시글 수정 (Update)
     @Transactional
-    public PostDTO updatePost(Long post_id, Long user_id, PostUpdateDTO postUpdateDTO) {
-        Post post = postRepository.findById(post_id)
+    public PostDTO updatePost(Long postId, Long userId, PostUpdateDTO postUpdateDTO) {
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
 
-        if (!post.getUser().getUser_id().equals(user_id)) {
+        if (!post.getUser().getUserId().equals(userId)) {
             throw new RuntimeException("게시글을 수정할 권한이 없습니다.");
         }
 
-        if (postUpdateDTO.getTransaction_status() != null) {
-            post.setTransaction_status(TransactionStatus.valueOf(postUpdateDTO.getTransaction_status()));  // ✅ ENUM 변환
+        if (postUpdateDTO.getTransactionStatus() != null) {
+            post.setTransactionStatus(TransactionStatus.valueOf(postUpdateDTO.getTransactionStatus()));  // ✅ ENUM 변환
         }
 
-        post.setUpdated_at(java.time.LocalDateTime.now());
+        post.setUpdatedAt(java.time.LocalDateTime.now());
         postRepository.save(post);
 
         return new PostDTO(post);
@@ -114,11 +112,11 @@ public class PostService {
 
     // ✅ 게시글 삭제 (Delete)
     @Transactional
-    public void deletePost(Long post_id, Long user_id) {
-        Post post = postRepository.findById(post_id)
+    public void deletePost(Long postId, Long userId) {
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
 
-        if (!post.getUser().getUser_id().equals(user_id)) {
+        if (!post.getUser().getUserId().equals(userId)) {
             throw new RuntimeException("게시글을 삭제할 권한이 없습니다.");
         }
 
@@ -127,21 +125,26 @@ public class PostService {
 
     // ✅ 검색 기능 추가
     @Transactional(readOnly = true)
-    public List<PostDTO> searchPosts(PostSearchDTO searchDTO, Long user_id) {
+    public List<PostDTO> searchPosts(PostSearchDTO searchDTO, Long userId) {
+        TransactionStatus transactionStatus = null;
+        if (searchDTO.getTransactionStatus() != null) {
+            transactionStatus = TransactionStatus.valueOf(searchDTO.getTransactionStatus());
+        }
+        
         List<Post> posts = postRepository.searchPosts(
                 searchDTO.getKeyword(),
-                searchDTO.getTransaction_status(),
+                transactionStatus,  // ✅ ENUM으로 변환 후 전달
                 searchDTO.getLocation(),
-                searchDTO.getMin_price(),
-                searchDTO.getMax_price()
+                searchDTO.getMinPrice(),
+                searchDTO.getMaxPrice()
         );
-    
+
         return posts.stream().map(post -> {
-            boolean liked = likeRepository.existsByUser_UserIdAndPost_PostId(user_id, post.getPost_id());
-            boolean bookmarked = bookmarkRepository.existsByUser_UserIdAndPost_PostId(user_id, post.getPost_id());
-            int likesCount = likeRepository.countByPost_PostId(post.getPost_id());
-            int bookmarksCount = bookmarkRepository.countByPost_PostId(post.getPost_id());
-    
+            boolean liked = likeRepository.existsByUser_UserIdAndPost_PostId(userId, post.getPostId());
+            boolean bookmarked = bookmarkRepository.existsByUser_UserIdAndPost_PostId(userId, post.getPostId());
+            int likesCount = likeRepository.countByPost_PostId(post.getPostId());
+            int bookmarksCount = bookmarkRepository.countByPost_PostId(post.getPostId());            
+
             return new PostDTO(post, liked, bookmarked, likesCount, bookmarksCount);
         }).collect(Collectors.toList());
     }

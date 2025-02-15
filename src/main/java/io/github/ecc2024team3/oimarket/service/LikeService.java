@@ -22,13 +22,13 @@ public class LikeService {
     }
 
     @Transactional
-    public boolean toggleLike(Long user_id, Long post_id) {
-        User user = userRepository.findById(user_id)
+    public boolean toggleLike(Long userId, Long postId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-        Post post = postRepository.findById(post_id)
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
     
-        return likeRepository.findByUser_UserIdAndPost_PostId(user_id, post_id)
+        return likeRepository.findByUser_UserIdAndPost_PostId(userId, postId)
                 .map(like -> {
                     likeRepository.delete(like);
                     return false; // ✅ 좋아요 취소됨

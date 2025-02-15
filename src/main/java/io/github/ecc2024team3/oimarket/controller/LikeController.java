@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/posts/{post_id}/likes")
+@RequestMapping("/api/posts/{postId}/likes")
 public class LikeController {
     private final LikeService likeService;
 
@@ -13,11 +13,11 @@ public class LikeController {
         this.likeService = likeService;
     }
 
-    // ✅ 좋아요 등록/취소 (POST /api/posts/{post_id}/likes)
+    // ✅ 좋아요 등록/취소 (POST /api/posts/{postId}/likes)
     @PostMapping
-    public ResponseEntity<String> toggleLike(@PathVariable Long post_id,
-                                             @RequestParam Long user_id) {
-        boolean liked = likeService.toggleLike(user_id, post_id);
+    public ResponseEntity<String> toggleLike(@PathVariable Long postId,
+                                             @RequestParam Long userId) {
+        boolean liked = likeService.toggleLike(userId, postId);
         return liked
                 ? ResponseEntity.ok("좋아요가 추가되었습니다.")
                 : ResponseEntity.ok("좋아요가 취소되었습니다.");

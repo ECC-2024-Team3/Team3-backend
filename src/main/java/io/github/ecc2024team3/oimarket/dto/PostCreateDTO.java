@@ -10,11 +10,11 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class PostCreateDTO {
-    private Long user_id;
+    private Long userId;
     private String title;
     private String location;
     private Integer price;
-    private String transaction_status;
+    private String transactionStatus;
     private String content;
     private List<String> images; // 업로드할 이미지 URL 리스트
 }

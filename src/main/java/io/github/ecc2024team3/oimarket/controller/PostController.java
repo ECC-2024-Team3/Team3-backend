@@ -23,58 +23,57 @@ public class PostController {
     // ✅ 게시글 생성 (POST /api/posts)
     @PostMapping
     public ResponseEntity<PostDTO> createPost(@RequestBody @Valid PostCreateDTO postCreateDTO,
-                                              @RequestParam Long user_id) {
-        return ResponseEntity.ok(postService.createPost(postCreateDTO, user_id));
+                                              @RequestParam Long userId) {
+        return ResponseEntity.ok(postService.createPost(postCreateDTO, userId));
     }
-
 
     // ✅ 전체 게시글 조회 (로그인한 사용자 ID 포함(좋아요/북마크 여부 확인을 위함))
     @GetMapping
-    public ResponseEntity<List<PostDTO>> getAllPosts(@RequestParam Long user_id) {
-        return ResponseEntity.ok(postService.getAllPosts(user_id));
+    public ResponseEntity<List<PostDTO>> getAllPosts(@RequestParam Long userId) {
+        return ResponseEntity.ok(postService.getAllPosts(userId));
     }
 
-    // ✅ 개별 게시글 조회 (GET /api/posts/{post_id})
-    @GetMapping("/{post_id}")
-    public ResponseEntity<PostDTO> getPostById(@PathVariable Long post_id,
-                                               @RequestParam Long user_id) {
-        return ResponseEntity.ok(postService.getPostById(post_id, user_id));
+    // ✅ 개별 게시글 조회 (GET /api/posts/{postId})
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostDTO> getPostById(@PathVariable Long postId,
+                                               @RequestParam Long userId) {
+        return ResponseEntity.ok(postService.getPostById(postId, userId));
     }
 
-    // ✅ 게시글 수정 (PATCH /api/posts/{post_id})
-    @PatchMapping("/{post_id}")
-    public ResponseEntity<PostDTO> updatePost(@PathVariable Long post_id,
-                                              @RequestParam Long user_id,
+    // ✅ 게시글 수정 (PATCH /api/posts/{postId})
+    @PatchMapping("/{postId}")
+    public ResponseEntity<PostDTO> updatePost(@PathVariable Long postId,
+                                              @RequestParam Long userId,
                                               @RequestBody PostUpdateDTO postUpdateDTO) {
-        return ResponseEntity.ok(postService.updatePost(post_id, user_id, postUpdateDTO));
+        return ResponseEntity.ok(postService.updatePost(postId, userId, postUpdateDTO));
     }
 
-    // ✅ 게시글 삭제 (DELETE /api/posts/{post_id})
-    @DeleteMapping("/{post_id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long post_id,
-                                           @RequestParam Long user_id) {
-        postService.deletePost(post_id, user_id);
+    // ✅ 게시글 삭제 (DELETE /api/posts/{postId})
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long postId,
+                                           @RequestParam Long userId) {
+        postService.deletePost(postId, userId);
         return ResponseEntity.noContent().build();
     }
 
     // ✅ 검색 기능 (로그인한 사용자 ID 포함(좋아요/북마크 여부 확인을 위함))
     @GetMapping("/search")
     public ResponseEntity<List<PostDTO>> searchPosts(
-            @RequestParam Long user_id,
+            @RequestParam Long userId,
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String transaction_status,
+            @RequestParam(required = false) String transactionStatus,
             @RequestParam(required = false) String location,
-            @RequestParam(required = false) Integer min_price,
-            @RequestParam(required = false) Integer max_price) {
+            @RequestParam(required = false) Integer minPrice,
+            @RequestParam(required = false) Integer maxPrice) {
 
         PostSearchDTO searchDTO = PostSearchDTO.builder()
                 .keyword(keyword)
-                .transaction_status(transaction_status)
+                .transactionStatus(transactionStatus)
                 .location(location)
-                .min_price(min_price)
-                .max_price(max_price)
+                .minPrice(minPrice)
+                .maxPrice(maxPrice)
                 .build();
 
-        return ResponseEntity.ok(postService.searchPosts(searchDTO, user_id));
+        return ResponseEntity.ok(postService.searchPosts(searchDTO, userId));
     }
 }

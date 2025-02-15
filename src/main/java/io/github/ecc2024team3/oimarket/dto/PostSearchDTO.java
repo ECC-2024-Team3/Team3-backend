@@ -9,8 +9,8 @@ import lombok.*;
 @Builder
 public class PostSearchDTO {
     private String keyword;
-    private String transaction_status;
+    private String transactionStatus;
     private String location;
-    private Integer min_price;
-    private Integer max_price;
+    private Integer minPrice;
+    private Integer maxPrice;
 }

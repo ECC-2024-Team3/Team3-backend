@@ -13,7 +13,7 @@ public class PostUpdateDTO {
     private String title;
     private String location;
     private Integer price;
-    private String transaction_status;
+    private String transactionStatus;
     private String content;
     private List<String> images;
 }
