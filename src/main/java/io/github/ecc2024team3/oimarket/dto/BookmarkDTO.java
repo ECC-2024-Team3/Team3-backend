@@ -9,14 +9,14 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class BookmarkDTO {
-    private Long bookmark_id;
-    private Long user_id;
-    private Long post_id;
+    private Long bookmarkId;
+    private Long userId;
+    private Long postId;
 
     // ✅ 엔티티 → DTO 변환 생성자 추가
     public BookmarkDTO(Bookmark bookmark) {
-        this.bookmark_id = bookmark.getBookmark_id();
-        this.user_id = bookmark.getUser().getUser_id();
-        this.post_id = bookmark.getPost().getPost_id();
+        this.bookmarkId = bookmark.getBookmarkId();
+        this.userId = bookmark.getUser().getUserId();
+        this.postId = bookmark.getPost().getPostId();
     }
 }

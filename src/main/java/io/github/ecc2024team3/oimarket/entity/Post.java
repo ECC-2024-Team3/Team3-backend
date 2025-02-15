@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,10 +18,10 @@ import java.util.List;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long post_id;
+    private Long postId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private User user;
 
     private String title;
@@ -29,17 +30,18 @@ public class Post {
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TransactionStatus transaction_status;
+    private TransactionStatus transactionStatus;
 
     @Column(columnDefinition = "TEXT")
     private String content;
 
     @Builder.Default
-    private LocalDateTime created_at = LocalDateTime.now();
-    private LocalDateTime updated_at;
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Image> images;
+    @Builder.Default
+    private List<Image> images = new ArrayList<>();
 
     // ✅ PostDTO → Post 엔티티 변환
     public Post(PostCreateDTO postDTO, User user) {
@@ -47,8 +49,8 @@ public class Post {
         this.title = postDTO.getTitle();
         this.location = postDTO.getLocation();
         this.price = postDTO.getPrice();
-        this.transaction_status = TransactionStatus.valueOf(postDTO.getTransaction_status());;
+        this.transactionStatus = TransactionStatus.valueOf(postDTO.getTransactionStatus());
         this.content = postDTO.getContent();
-        this.created_at = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
     }
 }

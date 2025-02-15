@@ -1,8 +1,8 @@
 package io.github.ecc2024team3.oimarket.entity;
 
 public enum TransactionStatus {
-    판매_중,
-    예약_중,
-    나눔,
-    거래_완료
+    ON_SALE,      // 판매 중
+    RESERVED,     // 예약 중
+    FREE,         // 나눔
+    COMPLETED     // 거래 완료
 }

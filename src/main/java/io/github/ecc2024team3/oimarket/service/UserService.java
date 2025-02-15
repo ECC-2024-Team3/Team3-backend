@@ -1,5 +1,3 @@
-// 대체 예정 (다른 담당자)
-
 package io.github.ecc2024team3.oimarket.service;
 
 import io.github.ecc2024team3.oimarket.dto.UserDTO;
@@ -26,7 +24,7 @@ public class UserService {
                 .email(userDTO.getEmail())
                 .password(userDTO.getPassword())
                 .nickname(userDTO.getNickname())
-                .profile_image(userDTO.getProfile_image())
+                .profileImage(userDTO.getProfileImage()) // ✅ 카멜 케이스 적용
                 .build();
 
         userRepository.save(user);

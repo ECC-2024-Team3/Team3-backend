@@ -9,14 +9,14 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class LikeDTO {
-    private Long like_id;
-    private Long user_id;
-    private Long post_id;
+    private Long likeId;
+    private Long userId;
+    private Long postId;
 
     // ✅ 엔티티 → DTO 변환 생성자 추가
     public LikeDTO(Like like) {
-        this.like_id = like.getLike_id();
-        this.user_id = like.getUser().getUser_id();
-        this.post_id = like.getPost().getPost_id();
+        this.likeId = like.getLikeId();
+        this.userId = like.getUser().getUserId();
+        this.postId = like.getPost().getPostId();
     }
 }
