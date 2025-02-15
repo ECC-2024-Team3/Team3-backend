@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: io.github.ecc2024team3.oimarket.service.PostServiceTest
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.154 s -- in io.github.ecc2024team3.oimarket.service.PostServiceTest

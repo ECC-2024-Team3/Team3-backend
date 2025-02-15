@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: io.github.ecc2024team3.oimarket.OimarketApplicationTests
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.404 s -- in io.github.ecc2024team3.oimarket.OimarketApplicationTests
