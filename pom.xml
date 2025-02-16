@@ -22,7 +22,7 @@
     </properties>
 
     <dependencies>
-        <!-- ✅ Spring Boot 기본 웹 관련 의존성 -->
+        <!-- ✅ Spring Boot 웹 애플리케이션 기본 설정 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -32,7 +32,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -53,15 +52,20 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- ✅ MySQL 드라이버 (DB 연결) -->
+        <!-- ✅ Spring Boot JDBC (H2 사용 시 필요할 수 있음) -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>provided</scope>  <!-- ✅ 테스트에서는 사용되지 않도록 설정 -->
-			<version>8.0.33</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
 
-        <!-- ✅ 테스트 관련 의존성 -->
+        <!-- ✅ H2 Database (로컬에서 MySQL 없이 실행 가능) -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- ✅ 테스트 관련 의존성
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -72,9 +76,15 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
+        </dependency> -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
+
 
 <build>
     <plugins>

@@ -8,6 +8,7 @@ io/github/ecc2024team3/oimarket/controller/BookmarkController.class
 io/github/ecc2024team3/oimarket/repository/BookmarkRepository.class
 io/github/ecc2024team3/oimarket/service/UserService.class
 io/github/ecc2024team3/oimarket/service/LikeService.class
+io/github/ecc2024team3/oimarket/controller/HomeController.class
 io/github/ecc2024team3/oimarket/service/PostService.class
 io/github/ecc2024team3/oimarket/dto/PostSearchDTO$PostSearchDTOBuilder.class
 io/github/ecc2024team3/oimarket/entity/Post$PostBuilder.class
