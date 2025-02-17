@@ -22,4 +22,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("minPrice") Integer minPrice,
             @Param("maxPrice") Integer maxPrice
     );
+    @Query("SELECT p FROM Post p WHERE p.user.id = :userId") // 특정 사용자 기준가 작성한 게시물 리스트로 조회
+    List<Post> findByUser(@Param("userId") Long userId);
 }

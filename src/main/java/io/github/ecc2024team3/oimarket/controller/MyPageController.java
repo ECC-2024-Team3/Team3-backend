@@ -84,6 +84,31 @@ public class MyPageController {
         myPageService.deleteAllLikedPosts(userId);
         return ResponseEntity.noContent().build();
     }
+// 북마크 조회, 삭제
+
+    // ✅ 북마크한 게시글 조회
+    @GetMapping("/bookmarks")
+    public ResponseEntity<List<Long>> getBookmarkedPosts(@RequestParam Long userId) {
+        getAuthenticatedUserId(userId);
+        return ResponseEntity.ok(myPageService.getBookmarkedPosts(userId));
+    }
+
+    // ✅ 선택한 북마크 해제
+    @DeleteMapping("/bookmarks")
+    public ResponseEntity<Void> deleteSelectedBookmarkedPosts(@RequestParam Long userId,
+                                                              @RequestBody List<Long> selectedPostIds) {
+        getAuthenticatedUserId(userId);
+        myPageService.deleteSelectedBookmarkedPosts(userId, selectedPostIds);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ✅ 모든 북마크 해제
+    @DeleteMapping("/bookmarks/all")
+    public ResponseEntity<Void> deleteAllBookmarkedPosts(@RequestParam Long userId) {
+        getAuthenticatedUserId(userId);
+        myPageService.deleteAllBookmarkedPosts(userId);
+        return ResponseEntity.noContent().build();
+    }
 
     // 댓글 조회, 삭제
 
