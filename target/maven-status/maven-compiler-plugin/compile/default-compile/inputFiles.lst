@@ -2,6 +2,7 @@
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/src/main/java/io/github/ecc2024team3/oimarket/controller/PostController.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/src/main/java/io/github/ecc2024team3/oimarket/repository/PostRepository.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/src/main/java/io/github/ecc2024team3/oimarket/entity/Image.java
+/Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/src/main/java/io/github/ecc2024team3/oimarket/config/CorsConfig.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/src/main/java/io/github/ecc2024team3/oimarket/dto/PostUpdateDTO.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/src/main/java/io/github/ecc2024team3/oimarket/dto/UserDTO.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/src/main/java/io/github/ecc2024team3/oimarket/entity/User.java
@@ -22,6 +23,7 @@
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/src/main/java/io/github/ecc2024team3/oimarket/repository/UserRepository.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/src/main/java/io/github/ecc2024team3/oimarket/entity/Post.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/src/main/java/io/github/ecc2024team3/oimarket/service/PostService.java
+/Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/src/main/java/io/github/ecc2024team3/oimarket/config/SecurityConfig.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/src/main/java/io/github/ecc2024team3/oimarket/repository/ImageRepository.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/src/main/java/io/github/ecc2024team3/oimarket/dto/LikeDTO.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/src/main/java/io/github/ecc2024team3/oimarket/service/UserService.java

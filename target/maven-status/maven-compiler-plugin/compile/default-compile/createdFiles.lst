@@ -1,5 +1,6 @@
 io/github/ecc2024team3/oimarket/dto/PostUpdateDTO$PostUpdateDTOBuilder.class
 io/github/ecc2024team3/oimarket/dto/LikeDTO.class
+io/github/ecc2024team3/oimarket/config/SecurityConfig.class
 io/github/ecc2024team3/oimarket/repository/LikeRepository.class
 io/github/ecc2024team3/oimarket/entity/User.class
 io/github/ecc2024team3/oimarket/service/BookmarkService.class
@@ -17,6 +18,7 @@ io/github/ecc2024team3/oimarket/entity/Bookmark$BookmarkBuilder.class
 io/github/ecc2024team3/oimarket/controller/PostController.class
 io/github/ecc2024team3/oimarket/controller/LikeController.class
 io/github/ecc2024team3/oimarket/dto/UserDTO.class
+io/github/ecc2024team3/oimarket/config/CorsConfig.class
 io/github/ecc2024team3/oimarket/dto/BookmarkDTO.class
 io/github/ecc2024team3/oimarket/dto/LikeDTO$LikeDTOBuilder.class
 io/github/ecc2024team3/oimarket/entity/Image$ImageBuilder.class
