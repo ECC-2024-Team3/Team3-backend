@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 
 @SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.NONE,
-    properties = "spring.profiles.active=test"
+        webEnvironment = SpringBootTest.WebEnvironment.NONE,
+        properties = "spring.profiles.active=test"
 )
 @ImportAutoConfiguration(exclude = SecurityAutoConfiguration.class)
 public class OimarketApplicationTests {
