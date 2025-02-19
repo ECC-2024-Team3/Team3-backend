@@ -15,14 +15,16 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         
-        config.setAllowedOrigins(List.of(
-            "http://localhost:3000", 
-            "https://oimarket-frontend.vercel.app",
-            "https://oimarket.com"
+        config.setAllowCredentials(true);
+        config.setAllowedOriginPatterns(List.of(
+            "http://localhost:[0-9]+",
+            "https://*.oimarket.com",
+            "https://*.vercel.app",
+            "http://oimarket-backend.ap-northeast-2.elasticbeanstalk.com",
+            "https://oimarket-backend.ap-northeast-2.elasticbeanstalk.com"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", config);
