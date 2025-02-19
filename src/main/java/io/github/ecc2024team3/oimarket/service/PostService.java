@@ -40,21 +40,20 @@ public class PostService {
         post.setTransactionStatus(TransactionStatus.valueOf(postDTO.getTransactionStatus())); // ✅ ENUM 변환
 
         postRepository.save(post);
-        return new PostDTO(post);
+        String representativeImage = (post.getImages() != null && !post.getImages().isEmpty()) 
+            ? post.getImages().get(0).getImageUrl() 
+            : null;
+
+        return new PostDTO(post, representativeImage);  // Return PostDTO with representative image
     }
 
     // ✅ 전체 게시글 조회 (Read - 모든 게시글)
     @Transactional(readOnly = true)
-    public List<PostDTO> getAllPosts(Long userId) {
+    public List<PostDTO> getAllPosts() {
         List<Post> posts = postRepository.findAll();
-
         return posts.stream().map(post -> {
-            boolean liked = likeRepository.existsByUser_UserIdAndPost_PostId(userId, post.getPostId());
-            boolean bookmarked = bookmarkRepository.existsByUser_UserIdAndPost_PostId(userId, post.getPostId());
-            int likesCount = likeRepository.countByPost_PostId(post.getPostId());
-            int bookmarksCount = bookmarkRepository.countByPost_PostId(post.getPostId());            
-
-            return new PostDTO(post, liked, bookmarked, likesCount, bookmarksCount);
+            String representativeImage = post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl();
+            return new PostDTO(post, representativeImage); // Return without likes/bookmarks
         }).collect(Collectors.toList());
     }
 
@@ -64,11 +63,10 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
 
-            int likesCount = likeRepository.countByPost_PostId(postId);
-            int bookmarksCount = bookmarkRepository.countByPost_PostId(postId);
-            boolean liked = likeRepository.existsByUser_UserIdAndPost_PostId(userId, postId);
-            boolean bookmarked = bookmarkRepository.existsByUser_UserIdAndPost_PostId(userId, postId);
-                
+        int likesCount = likeRepository.countByPost_PostId(postId);
+        int bookmarksCount = bookmarkRepository.countByPost_PostId(postId);
+        boolean liked = likeRepository.existsByUser_UserIdAndPost_PostId(userId, postId);
+        boolean bookmarked = bookmarkRepository.existsByUser_UserIdAndPost_PostId(userId, postId);
 
         String representativeImage = post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl();
 
@@ -107,7 +105,9 @@ public class PostService {
         post.setUpdatedAt(java.time.LocalDateTime.now());
         postRepository.save(post);
 
-        return new PostDTO(post);
+        String representativeImage = post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl();
+
+        return new PostDTO(post, representativeImage);  // Return PostDTO with representative image
     }
 
     // ✅ 게시글 삭제 (Delete)
@@ -125,7 +125,7 @@ public class PostService {
 
     // ✅ 검색 기능 추가
     @Transactional(readOnly = true)
-    public List<PostDTO> searchPosts(PostSearchDTO searchDTO, Long userId) {
+    public List<PostDTO> searchPosts(PostSearchDTO searchDTO) {
         TransactionStatus transactionStatus = null;
         if (searchDTO.getTransactionStatus() != null) {
             transactionStatus = TransactionStatus.valueOf(searchDTO.getTransactionStatus());
@@ -140,12 +140,8 @@ public class PostService {
         );
 
         return posts.stream().map(post -> {
-            boolean liked = likeRepository.existsByUser_UserIdAndPost_PostId(userId, post.getPostId());
-            boolean bookmarked = bookmarkRepository.existsByUser_UserIdAndPost_PostId(userId, post.getPostId());
-            int likesCount = likeRepository.countByPost_PostId(post.getPostId());
-            int bookmarksCount = bookmarkRepository.countByPost_PostId(post.getPostId());            
-
-            return new PostDTO(post, liked, bookmarked, likesCount, bookmarksCount);
+            String representativeImage = post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl();
+            return new PostDTO(post, representativeImage);  // Return PostDTO with representative image
         }).collect(Collectors.toList());
     }
 }
