@@ -2,6 +2,7 @@ package io.github.ecc2024team3.oimarket.service;
 
 import io.github.ecc2024team3.oimarket.dto.*;
 import io.github.ecc2024team3.oimarket.entity.Bookmark;
+import io.github.ecc2024team3.oimarket.entity.Image;
 import io.github.ecc2024team3.oimarket.entity.Like;
 import io.github.ecc2024team3.oimarket.entity.Post;
 import io.github.ecc2024team3.oimarket.repository.*;
@@ -12,8 +13,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,26 +31,38 @@ public class MyPageService {
 
     // ✅ 사용자가 작성한 모든 게시글 조회
     @Transactional
-    public Page<Long> getUserPosts(Long userId, int page, int size) {
+    public Page<PostDTO> getUserPosts(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, Math.max(size, 10));
-        return postRepository.findByUser(userId, pageable)
-                .map(Post::getPostId); // 게시글 ID만 추출하여 Page<Long> 반환
+        Page<Post> posts = postRepository.findByUser(userId, pageable);
+
+        return posts.map(post -> {
+            List<Image> images = Optional.ofNullable(post.getImages()).orElse(Collections.emptyList());
+            String representativeImage = images.isEmpty() ? null : images.get(0).getImageUrl();
+            return new PostDTO(post, representativeImage);
+        });
     }
 
     // ✅ 사용자가 선택한 게시글만 삭제
     @Transactional
-    public void deleteSelectedUserPosts(Long userId, List<Long> selectedPostIds) {
-        List<Long> userPostIds = getUserPosts(userId, 0, Integer.MAX_VALUE).getContent(); // 전체 게시글 가져옴
-        selectedPostIds.stream()
-                .filter(userPostIds::contains) // 사용자의 게시글인지 확인
-                .forEach(postId -> postService.deletePost(postId, userId)); // 선택된 게시글 삭제
+    public void deleteSelectedPosts(Long userId, List<Long> postIds) {
+        // 선택한 게시글을 조회
+        List<Post> posts = postRepository.findAllById(postIds);
+        postRepository.deleteAll(posts);
     }
 
-    // ✅ 사용자가 작성한 모든 게시글 삭제
+
+    // 사용자의 모든 게시글 삭제
     @Transactional
     public void deleteAllUserPosts(Long userId) {
-        List<Long> postIds = getUserPosts(userId, 0, Integer.MAX_VALUE).getContent(); // 전체 게시글 가져옴
-        postIds.forEach(postId -> postService.deletePost(postId, userId)); // 게시글 삭제
+        Pageable pageable = PageRequest.of(0, 100);  // 한 번에 100개씩 가져오기 (적절히 조정)
+        Page<Post> posts;
+
+        // 전체 페이지를 조회하여 삭제
+        do {
+            posts = postRepository.findByUser(userId, pageable);
+            posts.getContent().forEach(post -> postService.deletePost(post.getPostId(), userId)); // 게시글 삭제
+            pageable = pageable.next(); // 다음 페이지로 이동
+        } while (posts.hasNext()); // 더 이상 페이지가 없으면 종료
     }
 
     // ✅ 마이페이지에서 특정 게시글 수정하기
@@ -59,50 +73,77 @@ public class MyPageService {
 
     // ✅ 사용자가 좋아요한 게시글 목록 조회
     @Transactional
-    public Page<Long> getLikedPosts(Long userId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, Math.max(size, 10)); // 기본 size=10
-        return likeRepository.findByUserId(userId, pageable)
-                .map(like -> like.getPost().getPostId()); // ✅ Like → Post ID로 변환
+    public Page<PostDTO> getLikedPosts(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, Math.max(size, 10));
+        Page<Like> likes = likeRepository.findByUserId(userId, pageable); // ✅ 좋아요한 게시글 조회 (페이징 적용)
+
+        return likes.map(like -> {
+            Post post = like.getPost();
+            List<Image> images = Optional.ofNullable(post.getImages()).orElse(Collections.emptyList());
+            String representativeImage = images.isEmpty() ? null : images.get(0).getImageUrl();
+            return new PostDTO(post, representativeImage);
+        });
     }
 
     // ✅ 사용자가 선택한 게시글만 좋아요 해제
     @Transactional
-    public void deleteSelectedLikedPosts(Long userId, List<Long> selectedPostIds) {
-        List<Like> likesToRemove = likeRepository.findByUserId(userId, Pageable.unpaged()).stream()
-                .filter(like -> selectedPostIds.contains(like.getPost().getPostId()))
-                .collect(Collectors.toList());
-        likeRepository.deleteAll(likesToRemove);
+    public void deleteSelectedLikedPosts(Long userId, List<Long> likeIds) {
+        List<Like> likes = likeRepository.findAllById(likeIds);
+        likeRepository.deleteAll(likes);
     }
 
     // ✅ 사용자가 좋아요한 모든 게시글 좋아요 해제
     @Transactional
     public void deleteAllLikedPosts(Long userId) {
-        List<Like> likes = likeRepository.findByUserId(userId, Pageable.unpaged()).getContent();
-        likeRepository.deleteAll(likes);
+        // 페이지네이션 설정 (한 번에 100개씩 처리)
+        Pageable pageable = PageRequest.of(0, 100);
+
+        // 사용자가 좋아요한 모든 Like 조회 (페이징)
+        Page<Like> likesPage = likeRepository.findByUserId(userId, pageable);
+
+        // 모든 좋아요를 제거
+        while (likesPage.hasContent()) {
+            likeRepository.deleteAll(likesPage.getContent());  // 해당 페이지의 모든 좋아요 삭제
+            likesPage = likeRepository.findByUserId(userId, pageable.next());  // 다음 페이지로 이동
+        }
     }
 
     // ✅ 사용자가 북마크한 게시글 목록 조회
     @Transactional
-    public Page<Long> getBookmarkedPosts(Long userId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, Math.max(size, 10)); // 기본 size=10
-        return bookmarkRepository.findByUserId(userId, pageable)
-                .map(bookmark -> bookmark.getPost().getPostId()); // ✅ Bookmark → Post ID로 변환
+    public Page<PostDTO> getBookmarkedPosts(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, Math.max(size, 10));
+        Page<Bookmark> bookmarks = bookmarkRepository.findByUserId(userId, pageable); // ✅ 북마크한 게시글 조회 (페이징 적용)
+
+        return bookmarks.map(bookmark -> {
+            Post post = bookmark.getPost();
+            List<Image> images = Optional.ofNullable(post.getImages()).orElse(Collections.emptyList());
+            String representativeImage = images.isEmpty() ? null : images.get(0).getImageUrl();
+            return new PostDTO(post, representativeImage);
+        });
+
     }
 
     // ✅ 사용자가 선택한 게시글만 북마크 해제
     @Transactional
-    public void deleteSelectedBookmarkedPosts(Long userId, List<Long> selectedPostIds) {
-        List<Bookmark> bookmarksToRemove = bookmarkRepository.findByUserId(userId, Pageable.unpaged()).stream()
-                .filter(bookmark -> selectedPostIds.contains(bookmark.getPost().getPostId()))
-                .collect(Collectors.toList());
-        bookmarkRepository.deleteAll(bookmarksToRemove);
+    public void deleteSelectedBookmarkedPosts(Long userId, List<Long> bookmarkIds) {
+        List<Bookmark> bookmarks = bookmarkRepository.findAllById(bookmarkIds);
+        bookmarkRepository.deleteAll(bookmarks);
     }
 
     // ✅ 사용자가 북마크한 모든 게시글 북마크 해제
     @Transactional
     public void deleteAllBookmarkedPosts(Long userId) {
-        List<Bookmark> bookmarks = bookmarkRepository.findByUserId(userId, Pageable.unpaged()).getContent();
-        bookmarkRepository.deleteAll(bookmarks);
+        // 페이지네이션 설정 (한 번에 100개씩 처리)
+        Pageable pageable = PageRequest.of(0, 100);
+
+        // 사용자가 북마크한 모든 Bookmark 조회 (페이징)
+        Page<Bookmark> bookmarksPage = bookmarkRepository.findByUserId(userId, pageable);
+
+        // 모든 북마크를 제거
+        while (bookmarksPage.hasContent()) {
+            bookmarkRepository.deleteAll(bookmarksPage.getContent());  // 해당 페이지의 모든 북마크 삭제
+            bookmarksPage = bookmarkRepository.findByUserId(userId, pageable.next());  // 다음 페이지로 이동
+        }
     }
 
     // ✅ 사용자의 댓글 조회
