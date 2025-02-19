@@ -5,9 +5,7 @@ import io.github.ecc2024team3.oimarket.dto.CommentDTO;
 import io.github.ecc2024team3.oimarket.dto.PostCreateDTO;
 import io.github.ecc2024team3.oimarket.dto.PostDTO;
 import io.github.ecc2024team3.oimarket.entity.User;
-import io.github.ecc2024team3.oimarket.repository.PostRepository;
 import io.github.ecc2024team3.oimarket.repository.UserRepository;
-import io.github.ecc2024team3.oimarket.repository.CommentRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,12 +33,6 @@ public class CommentServiceTest {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private CommentRepository commentRepository;
-
-    @Autowired
-    private PostRepository postRepository;
 
     private Long userId;
     private Long postId;

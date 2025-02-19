@@ -38,6 +38,8 @@ public class MyPageServiceTest {
     private MyPageService myPageService;
     @Autowired
     private PostService postService;
+    @Autowired
+    private CommentService commentService; // ✅ 댓글 서비스 추가
 
     @Autowired
     private UserRepository userRepository;
@@ -47,7 +49,6 @@ public class MyPageServiceTest {
     private LikeRepository likeRepository;
     @Autowired
     private PostRepository postRepository;
-
 
     private Long userId;
     private Long postId;
@@ -81,14 +82,16 @@ public class MyPageServiceTest {
         PostDTO createdPost = postService.createPost(postCreateDTO, userId);
         this.postId = createdPost.getPostId();
 
-        CreateCommentDTO createCommentDTO = CreateCommentDTO.builder()
-                .content("테스트 댓글")
-                .build();
-
         // ✅ 게시글 엔티티 가져오기
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
 
+        // ✅ 댓글 추가
+        CreateCommentDTO createCommentDTO = CreateCommentDTO.builder()
+                .content("테스트 댓글")
+                .build();
+
+        commentService.createComment(postId, userId, createCommentDTO); // ✅ 댓글 생성 코드 추가
 
         // ✅ 좋아요 추가
         Like like = Like.builder()
@@ -105,8 +108,6 @@ public class MyPageServiceTest {
         bookmarkRepository.save(bookmark);
     }
 
-
-
     @Test
     void testGetUserPosts() {
         List<Long> userPosts = myPageService.getUserPosts(userId);
@@ -117,20 +118,22 @@ public class MyPageServiceTest {
     void testGetUserComments() {
         List<CommentDTO> userComments = myPageService.getUserComments(userId);
         assertThat(userComments).isNotNull();
+        assertThat(userComments).isNotEmpty(); // ✅ 댓글이 정상적으로 추가되었는지 확인
+        assertThat(userComments.get(0).getContent()).isEqualTo("테스트 댓글");
     }
 
     @Test
     void testDeleteAllLikedPosts() {
-        // 북마크 추가 (가정)
+        // 좋아요 추가 (가정)
         List<Long> likedPosts = myPageService.getLikedPosts(userId);
-        assertThat(likedPosts).isNotEmpty(); // 북마크 데이터가 존재하는지 확인
+        assertThat(likedPosts).isNotEmpty(); // 좋아요 데이터가 존재하는지 확인
 
-        // 북마크 전체 삭제
-        myPageService.deleteAllBookmarkedPosts(userId);
+        // 좋아요 전체 삭제
+        myPageService.deleteAllLikedPosts(userId);
 
         // 삭제 후 확인
-        List<Long> afterDelete = myPageService.getBookmarkedPosts(userId);
-        assertThat(afterDelete).isEmpty(); // 북마크가 삭제되었는지 확인
+        List<Long> afterDelete = myPageService.getLikedPosts(userId);
+        assertThat(afterDelete).isEmpty(); // 좋아요가 삭제되었는지 확인
     }
 
     @Test
@@ -146,5 +149,4 @@ public class MyPageServiceTest {
         List<Long> afterDelete = myPageService.getBookmarkedPosts(userId);
         assertThat(afterDelete).isEmpty(); // 북마크가 삭제되었는지 확인
     }
-
 }
