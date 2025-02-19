@@ -11,10 +11,12 @@ import io.github.ecc2024team3.oimarket.repository.BookmarkRepository;
 import io.github.ecc2024team3.oimarket.repository.LikeRepository;
 import io.github.ecc2024team3.oimarket.repository.PostRepository;
 import io.github.ecc2024team3.oimarket.repository.UserRepository;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -40,22 +42,23 @@ public class PostService {
         post.setTransactionStatus(TransactionStatus.valueOf(postDTO.getTransactionStatus())); // ✅ ENUM 변환
 
         postRepository.save(post);
-        return new PostDTO(post);
+        String representativeImage = (post.getImages() != null && !post.getImages().isEmpty()) 
+            ? post.getImages().get(0).getImageUrl() 
+            : null;
+
+        return new PostDTO(post, representativeImage);  // Return PostDTO with representative image
     }
 
     // ✅ 전체 게시글 조회 (Read - 모든 게시글)
     @Transactional(readOnly = true)
-    public List<PostDTO> getAllPosts(Long userId) {
-        List<Post> posts = postRepository.findAll();
+    public Page<PostDTO> getAllPosts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size); // 기본값 설정
+        Page<Post> posts = postRepository.findAll(pageable);
 
-        return posts.stream().map(post -> {
-            boolean liked = likeRepository.existsByUser_UserIdAndPost_PostId(userId, post.getPostId());
-            boolean bookmarked = bookmarkRepository.existsByUser_UserIdAndPost_PostId(userId, post.getPostId());
-            int likesCount = likeRepository.countByPost_PostId(post.getPostId());
-            int bookmarksCount = bookmarkRepository.countByPost_PostId(post.getPostId());            
-
-            return new PostDTO(post, liked, bookmarked, likesCount, bookmarksCount);
-        }).collect(Collectors.toList());
+        return posts.map(post -> {
+            String representativeImage = post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl();
+            return new PostDTO(post, representativeImage);
+        });
     }
 
     // ✅ 개별 게시글 조회 (Read - 특정 게시글)
@@ -64,11 +67,10 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
 
-            int likesCount = likeRepository.countByPost_PostId(postId);
-            int bookmarksCount = bookmarkRepository.countByPost_PostId(postId);
-            boolean liked = likeRepository.existsByUser_UserIdAndPost_PostId(userId, postId);
-            boolean bookmarked = bookmarkRepository.existsByUser_UserIdAndPost_PostId(userId, postId);
-                
+        int likesCount = likeRepository.countByPost_PostId(postId);
+        int bookmarksCount = bookmarkRepository.countByPost_PostId(postId);
+        boolean liked = likeRepository.existsByUser_UserIdAndPost_PostId(userId, postId);
+        boolean bookmarked = bookmarkRepository.existsByUser_UserIdAndPost_PostId(userId, postId);
 
         String representativeImage = post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl();
 
@@ -107,7 +109,9 @@ public class PostService {
         post.setUpdatedAt(java.time.LocalDateTime.now());
         postRepository.save(post);
 
-        return new PostDTO(post);
+        String representativeImage = post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl();
+
+        return new PostDTO(post, representativeImage);  // Return PostDTO with representative image
     }
 
     // ✅ 게시글 삭제 (Delete)
@@ -125,27 +129,26 @@ public class PostService {
 
     // ✅ 검색 기능 추가
     @Transactional(readOnly = true)
-    public List<PostDTO> searchPosts(PostSearchDTO searchDTO, Long userId) {
+    public Page<PostDTO> searchPosts(PostSearchDTO searchDTO, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
         TransactionStatus transactionStatus = null;
+        
         if (searchDTO.getTransactionStatus() != null) {
             transactionStatus = TransactionStatus.valueOf(searchDTO.getTransactionStatus());
         }
-        
-        List<Post> posts = postRepository.searchPosts(
+
+        Page<Post> posts = postRepository.searchPosts(
                 searchDTO.getKeyword(),
-                transactionStatus,  // ✅ ENUM으로 변환 후 전달
+                transactionStatus,
                 searchDTO.getLocation(),
                 searchDTO.getMinPrice(),
-                searchDTO.getMaxPrice()
+                searchDTO.getMaxPrice(),
+                pageable
         );
 
-        return posts.stream().map(post -> {
-            boolean liked = likeRepository.existsByUser_UserIdAndPost_PostId(userId, post.getPostId());
-            boolean bookmarked = bookmarkRepository.existsByUser_UserIdAndPost_PostId(userId, post.getPostId());
-            int likesCount = likeRepository.countByPost_PostId(post.getPostId());
-            int bookmarksCount = bookmarkRepository.countByPost_PostId(post.getPostId());            
-
-            return new PostDTO(post, liked, bookmarked, likesCount, bookmarksCount);
-        }).collect(Collectors.toList());
+        return posts.map(post -> {
+            String representativeImage = post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl();
+            return new PostDTO(post, representativeImage);
+        });
     }
 }

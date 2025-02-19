@@ -18,12 +18,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import jakarta.transaction.Transactional;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,7 +39,7 @@ public class MyPageServiceTest {
     @Autowired
     private PostService postService;
     @Autowired
-    private CommentService commentService; // ✅ 댓글 서비스 추가
+    private CommentService commentService;
 
     @Autowired
     private UserRepository userRepository;
@@ -52,6 +52,7 @@ public class MyPageServiceTest {
 
     private Long userId;
     private Long postId;
+    private final int DEFAULT_PAGE_SIZE = 10;
 
     @BeforeEach
     void setUp() {
@@ -90,8 +91,7 @@ public class MyPageServiceTest {
         CreateCommentDTO createCommentDTO = CreateCommentDTO.builder()
                 .content("테스트 댓글")
                 .build();
-
-        commentService.createComment(postId, userId, createCommentDTO); // ✅ 댓글 생성 코드 추가
+        commentService.createComment(postId, userId, createCommentDTO); 
 
         // ✅ 좋아요 추가
         Like like = Like.builder()
@@ -110,43 +110,44 @@ public class MyPageServiceTest {
 
     @Test
     void testGetUserPosts() {
-        List<Long> userPosts = myPageService.getUserPosts(userId);
-        assertThat(userPosts).isNotNull();
+        Page<Long> userPosts = myPageService.getUserPosts(userId, 0, DEFAULT_PAGE_SIZE);
+        assertThat(userPosts.getContent()).isNotNull();
+        assertThat(userPosts.getContent()).isNotEmpty();
     }
 
     @Test
     void testGetUserComments() {
-        List<CommentDTO> userComments = myPageService.getUserComments(userId);
-        assertThat(userComments).isNotNull();
-        assertThat(userComments).isNotEmpty(); // ✅ 댓글이 정상적으로 추가되었는지 확인
-        assertThat(userComments.get(0).getContent()).isEqualTo("테스트 댓글");
+        Page<CommentDTO> userComments = myPageService.getUserComments(userId, 0, 10);
+        assertThat(userComments.getContent()).isNotNull();
+        assertThat(userComments.getContent()).isNotEmpty();
+        assertThat(userComments.getContent().get(0).getContent()).isEqualTo("테스트 댓글");
     }
 
     @Test
     void testDeleteAllLikedPosts() {
-        // 좋아요 추가 (가정)
-        List<Long> likedPosts = myPageService.getLikedPosts(userId);
-        assertThat(likedPosts).isNotEmpty(); // 좋아요 데이터가 존재하는지 확인
+        // ✅ 좋아요 추가 확인
+        Page<Long> likedPosts = myPageService.getLikedPosts(userId, 0, DEFAULT_PAGE_SIZE);
+        assertThat(likedPosts.getContent()).isNotEmpty();
 
-        // 좋아요 전체 삭제
+        // ✅ 좋아요 전체 삭제
         myPageService.deleteAllLikedPosts(userId);
 
-        // 삭제 후 확인
-        List<Long> afterDelete = myPageService.getLikedPosts(userId);
-        assertThat(afterDelete).isEmpty(); // 좋아요가 삭제되었는지 확인
+        // ✅ 삭제 후 확인
+        Page<Long> afterDelete = myPageService.getLikedPosts(userId, 0, DEFAULT_PAGE_SIZE);
+        assertThat(afterDelete.getContent()).isEmpty();
     }
 
     @Test
     void testDeleteAllBookmarkedPosts() {
-        // 북마크 추가 (가정)
-        List<Long> bookmarkedPosts = myPageService.getBookmarkedPosts(userId);
-        assertThat(bookmarkedPosts).isNotEmpty(); // 북마크 데이터가 존재하는지 확인
+        // ✅ 북마크 추가 확인
+        Page<Long> bookmarkedPosts = myPageService.getBookmarkedPosts(userId, 0, DEFAULT_PAGE_SIZE);
+        assertThat(bookmarkedPosts.getContent()).isNotEmpty();
 
-        // 북마크 전체 삭제
+        // ✅ 북마크 전체 삭제
         myPageService.deleteAllBookmarkedPosts(userId);
 
-        // 삭제 후 확인
-        List<Long> afterDelete = myPageService.getBookmarkedPosts(userId);
-        assertThat(afterDelete).isEmpty(); // 북마크가 삭제되었는지 확인
+        // ✅ 삭제 후 확인
+        Page<Long> afterDelete = myPageService.getBookmarkedPosts(userId, 0, DEFAULT_PAGE_SIZE);
+        assertThat(afterDelete.getContent()).isEmpty();
     }
 }
