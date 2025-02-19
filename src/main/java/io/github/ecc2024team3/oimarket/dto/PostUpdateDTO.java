@@ -12,17 +12,20 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class PostUpdateDTO {
-    @NotBlank(message = "Title은 비워둘 수 없습니다.")
+    @NotBlank(message = "제목을 입력해주세요.") 
     private String title;
 
-    @NotBlank(message = "Category는 비워둘 수 없습니다.")
-    private String category;
-
-    @NotBlank(message = "Location은 비워둘 수 없습니다.")
+    @NotBlank(message = "장소를 입력해주세요.")
     private String location;
 
-    @NotNull(message = "Price는 null이 될 수 없습니다.")
+    @NotNull(message = "가격을 입력해주세요.")
     private Integer price;
+
+    @NotBlank(message = "카테고리를 선택해주세요.") 
+    private String category;
+
+    @NotBlank(message = "제품상태를 선택해주세요.")  
+    private String condition;
 
     private String transactionStatus;
     private String content;

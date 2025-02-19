@@ -19,6 +19,7 @@
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/Team3-backend/src/main/java/io/github/ecc2024team3/oimarket/dto/PostUpdateDTO.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/Team3-backend/src/main/java/io/github/ecc2024team3/oimarket/entity/TransactionStatus.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/Team3-backend/src/main/java/io/github/ecc2024team3/oimarket/repository/PostRepository.java
+/Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/Team3-backend/src/main/java/io/github/ecc2024team3/oimarket/entity/Condition.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/Team3-backend/src/main/java/io/github/ecc2024team3/oimarket/controller/MyPageController.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/Team3-backend/src/main/java/io/github/ecc2024team3/oimarket/repository/UserRepository.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/Team3-backend/src/main/java/io/github/ecc2024team3/oimarket/service/BookmarkService.java
