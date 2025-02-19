@@ -1,7 +1,6 @@
 package io.github.ecc2024team3.oimarket.repository;
 
 import io.github.ecc2024team3.oimarket.entity.Bookmark;
-import io.github.ecc2024team3.oimarket.entity.Like;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

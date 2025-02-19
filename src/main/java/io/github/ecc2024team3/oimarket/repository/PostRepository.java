@@ -1,6 +1,5 @@
 package io.github.ecc2024team3.oimarket.repository;
 
-import io.github.ecc2024team3.oimarket.entity.Like;
 import io.github.ecc2024team3.oimarket.entity.Post;
 import io.github.ecc2024team3.oimarket.entity.TransactionStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
