@@ -6,6 +6,7 @@
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/Team3-backend/src/main/java/io/github/ecc2024team3/oimarket/dto/CreateCommentDTO.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/Team3-backend/src/main/java/io/github/ecc2024team3/oimarket/repository/LikeRepository.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/Team3-backend/src/main/java/io/github/ecc2024team3/oimarket/dto/BookmarkDTO.java
+/Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/Team3-backend/src/main/java/io/github/ecc2024team3/oimarket/entity/Category.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/Team3-backend/src/main/java/io/github/ecc2024team3/oimarket/service/LikeService.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/Team3-backend/src/main/java/io/github/ecc2024team3/oimarket/repository/CommentRepository.java
 /Users/susie/Desktop/Temp_Laptop2/Java_Files/Yn/ewha/24_2_ECC_back/oimarket/Team3-backend/src/main/java/io/github/ecc2024team3/oimarket/entity/Image.java

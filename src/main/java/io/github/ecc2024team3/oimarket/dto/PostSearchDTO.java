@@ -10,6 +10,7 @@ import lombok.*;
 public class PostSearchDTO {
     private String keyword;
     private String transactionStatus;
+    private String category;
     private String location;
     private Integer minPrice;
     private Integer maxPrice;

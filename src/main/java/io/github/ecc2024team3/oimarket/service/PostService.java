@@ -4,6 +4,7 @@ import io.github.ecc2024team3.oimarket.dto.PostDTO;
 import io.github.ecc2024team3.oimarket.dto.PostSearchDTO;
 import io.github.ecc2024team3.oimarket.dto.PostCreateDTO;
 import io.github.ecc2024team3.oimarket.dto.PostUpdateDTO;
+import io.github.ecc2024team3.oimarket.entity.Category;
 import io.github.ecc2024team3.oimarket.entity.Post;
 import io.github.ecc2024team3.oimarket.entity.TransactionStatus;
 import io.github.ecc2024team3.oimarket.entity.User;
@@ -37,17 +38,36 @@ public class PostService {
     public PostDTO createPost(PostCreateDTO postDTO, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-
+    
+        if (postDTO.getTitle() == null || postDTO.getTitle().isBlank()) {
+            throw new IllegalArgumentException("제목을 입력해주세요.");
+        }
+        if (postDTO.getLocation() == null || postDTO.getLocation().isBlank()) {
+            throw new IllegalArgumentException("장소를 입력해주세요.");
+        }
+        if (postDTO.getPrice() == null) {
+            throw new IllegalArgumentException("가격을 입력해주세요.");
+        }
+        if (postDTO.getCategory() == null) {
+            throw new IllegalArgumentException("카테고리를 선택해주세요.");
+        }
+    
+        TransactionStatus status = (postDTO.getTransactionStatus() != null)
+                ? TransactionStatus.valueOf(postDTO.getTransactionStatus())
+                : TransactionStatus.ON_SALE;
+    
         Post post = new Post(postDTO, user);
-        post.setTransactionStatus(TransactionStatus.valueOf(postDTO.getTransactionStatus())); // ✅ ENUM 변환
-
+        post.setTransactionStatus(status);
+        post.setCategory(Category.valueOf(postDTO.getCategory()));
+    
         postRepository.save(post);
+        
         String representativeImage = (post.getImages() != null && !post.getImages().isEmpty()) 
             ? post.getImages().get(0).getImageUrl() 
             : null;
-
-        return new PostDTO(post, representativeImage);  // Return PostDTO with representative image
-    }
+    
+        return new PostDTO(post, representativeImage);
+    }    
 
     // ✅ 전체 게시글 조회 (Read - 모든 게시글)
     @Transactional(readOnly = true)
@@ -97,22 +117,41 @@ public class PostService {
     public PostDTO updatePost(Long postId, Long userId, PostUpdateDTO postUpdateDTO) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
-
+    
         if (!post.getUser().getUserId().equals(userId)) {
             throw new RuntimeException("게시글을 수정할 권한이 없습니다.");
         }
-
-        if (postUpdateDTO.getTransactionStatus() != null) {
-            post.setTransactionStatus(TransactionStatus.valueOf(postUpdateDTO.getTransactionStatus()));  // ✅ ENUM 변환
+    
+        // ✅ 필수 필드 검증 (null 또는 빈 값 불가)
+        if (postUpdateDTO.getTitle() == null || postUpdateDTO.getTitle().isBlank()) {
+            throw new IllegalArgumentException("제목을 입력해주세요.");
         }
-
+        if (postUpdateDTO.getLocation() == null || postUpdateDTO.getLocation().isBlank()) {
+            throw new IllegalArgumentException("장소를 입력해주세요.");
+        }
+        if (postUpdateDTO.getPrice() == null) {
+            throw new IllegalArgumentException("가격을 입력해주세요.");
+        }
+        if (postUpdateDTO.getCategory() == null) {
+            throw new IllegalArgumentException("카테고리를 선택해주세요.");
+        }
+    
+        post.setTitle(postUpdateDTO.getTitle());
+        post.setLocation(postUpdateDTO.getLocation());
+        post.setPrice(postUpdateDTO.getPrice());
+        post.setCategory(Category.valueOf(postUpdateDTO.getCategory()));
+    
+        if (postUpdateDTO.getTransactionStatus() != null) {
+            post.setTransactionStatus(TransactionStatus.valueOf(postUpdateDTO.getTransactionStatus()));
+        }
+    
         post.setUpdatedAt(java.time.LocalDateTime.now());
         postRepository.save(post);
-
+    
         String representativeImage = post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl();
-
-        return new PostDTO(post, representativeImage);  // Return PostDTO with representative image
-    }
+    
+        return new PostDTO(post, representativeImage);
+    }    
 
     // ✅ 게시글 삭제 (Delete)
     @Transactional
@@ -132,14 +171,20 @@ public class PostService {
     public Page<PostDTO> searchPosts(PostSearchDTO searchDTO, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         TransactionStatus transactionStatus = null;
+        Category category = null;
         
         if (searchDTO.getTransactionStatus() != null) {
             transactionStatus = TransactionStatus.valueOf(searchDTO.getTransactionStatus());
         }
 
+        if (searchDTO.getCategory() != null) {
+            category = Category.valueOf(searchDTO.getCategory());
+        }
+
         Page<Post> posts = postRepository.searchPosts(
                 searchDTO.getKeyword(),
                 transactionStatus,
+                category,
                 searchDTO.getLocation(),
                 searchDTO.getMinPrice(),
                 searchDTO.getMaxPrice(),

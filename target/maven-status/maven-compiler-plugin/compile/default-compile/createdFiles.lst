@@ -46,6 +46,7 @@ io/github/ecc2024team3/oimarket/dto/LikeDTO$LikeDTOBuilder.class
 io/github/ecc2024team3/oimarket/entity/Image$ImageBuilder.class
 io/github/ecc2024team3/oimarket/entity/User$UserBuilder.class
 io/github/ecc2024team3/oimarket/dto/BookmarkDTO$BookmarkDTOBuilder.class
+io/github/ecc2024team3/oimarket/entity/Category.class
 io/github/ecc2024team3/oimarket/entity/Comment$CommentBuilder.class
 io/github/ecc2024team3/oimarket/OimarketApplication.class
 io/github/ecc2024team3/oimarket/dto/PostSearchDTO.class
