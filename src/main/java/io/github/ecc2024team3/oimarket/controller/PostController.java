@@ -8,8 +8,7 @@ import io.github.ecc2024team3.oimarket.service.PostService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -29,8 +28,10 @@ public class PostController {
 
     // ✅ 전체 게시글 조회 (로그인한 사용자 ID 포함(좋아요/북마크 여부 확인을 위함))
     @GetMapping
-    public ResponseEntity<List<PostDTO>> getAllPosts() {
-        return ResponseEntity.ok(postService.getAllPosts());
+    public ResponseEntity<Page<PostDTO>> getAllPosts(
+            @RequestParam(defaultValue = "0") int page,  // 기본 페이지 0
+            @RequestParam(defaultValue = "10") int size) { // 기본 size 10
+        return ResponseEntity.ok(postService.getAllPosts(page, size));
     }
 
     // ✅ 개별 게시글 조회 (GET /api/posts/{postId})
@@ -58,12 +59,14 @@ public class PostController {
 
     // ✅ 검색 기능 (로그인한 사용자 ID 포함(좋아요/북마크 여부 확인을 위함))
     @GetMapping("/search")
-    public ResponseEntity<List<PostDTO>> searchPosts(
+    public ResponseEntity<Page<PostDTO>> searchPosts(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String transactionStatus,
             @RequestParam(required = false) String location,
             @RequestParam(required = false) Integer minPrice,
-            @RequestParam(required = false) Integer maxPrice) {
+            @RequestParam(required = false) Integer maxPrice,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
         PostSearchDTO searchDTO = PostSearchDTO.builder()
                 .keyword(keyword)
@@ -73,6 +76,6 @@ public class PostController {
                 .maxPrice(maxPrice)
                 .build();
 
-        return ResponseEntity.ok(postService.searchPosts(searchDTO));
+        return ResponseEntity.ok(postService.searchPosts(searchDTO, page, size));
     }
 }

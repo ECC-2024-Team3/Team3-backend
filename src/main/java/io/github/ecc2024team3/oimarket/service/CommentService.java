@@ -8,11 +8,12 @@ import io.github.ecc2024team3.oimarket.entity.Post;
 import io.github.ecc2024team3.oimarket.entity.User;
 import io.github.ecc2024team3.oimarket.repository.*;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @RequiredArgsConstructor
@@ -31,11 +32,11 @@ public class CommentService {
     }
 
     // 특정 게시글 기준으로 댓글 조회하기
-    public List<CommentDTO> getCommentsByPost(Long postId) {
-        return commentRepository.findByPostId(postId)
-                .stream()
-                .map(CommentDTO::new)
-                .collect(Collectors.toList());
+    @Transactional(readOnly = true)
+    public Page<CommentDTO> getCommentsByPost(Long postId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, Math.max(size, 10)); // 기본 size=10
+        return commentRepository.findByPostId(postId, pageable)
+                .map(CommentDTO::new);
     }
 
     // 댓글 작성하기

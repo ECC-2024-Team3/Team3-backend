@@ -11,10 +11,12 @@ import io.github.ecc2024team3.oimarket.repository.BookmarkRepository;
 import io.github.ecc2024team3.oimarket.repository.LikeRepository;
 import io.github.ecc2024team3.oimarket.repository.PostRepository;
 import io.github.ecc2024team3.oimarket.repository.UserRepository;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -49,12 +51,14 @@ public class PostService {
 
     // ✅ 전체 게시글 조회 (Read - 모든 게시글)
     @Transactional(readOnly = true)
-    public List<PostDTO> getAllPosts() {
-        List<Post> posts = postRepository.findAll();
-        return posts.stream().map(post -> {
+    public Page<PostDTO> getAllPosts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size); // 기본값 설정
+        Page<Post> posts = postRepository.findAll(pageable);
+
+        return posts.map(post -> {
             String representativeImage = post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl();
-            return new PostDTO(post, representativeImage); // Return without likes/bookmarks
-        }).collect(Collectors.toList());
+            return new PostDTO(post, representativeImage);
+        });
     }
 
     // ✅ 개별 게시글 조회 (Read - 특정 게시글)
@@ -125,23 +129,26 @@ public class PostService {
 
     // ✅ 검색 기능 추가
     @Transactional(readOnly = true)
-    public List<PostDTO> searchPosts(PostSearchDTO searchDTO) {
+    public Page<PostDTO> searchPosts(PostSearchDTO searchDTO, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
         TransactionStatus transactionStatus = null;
+        
         if (searchDTO.getTransactionStatus() != null) {
             transactionStatus = TransactionStatus.valueOf(searchDTO.getTransactionStatus());
         }
-        
-        List<Post> posts = postRepository.searchPosts(
+
+        Page<Post> posts = postRepository.searchPosts(
                 searchDTO.getKeyword(),
-                transactionStatus,  // ✅ ENUM으로 변환 후 전달
+                transactionStatus,
                 searchDTO.getLocation(),
                 searchDTO.getMinPrice(),
-                searchDTO.getMaxPrice()
+                searchDTO.getMaxPrice(),
+                pageable
         );
 
-        return posts.stream().map(post -> {
+        return posts.map(post -> {
             String representativeImage = post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl();
-            return new PostDTO(post, representativeImage);  // Return PostDTO with representative image
-        }).collect(Collectors.toList());
+            return new PostDTO(post, representativeImage);
+        });
     }
 }
