@@ -35,6 +35,7 @@ io/github/ecc2024team3/oimarket/entity/Image.class
 io/github/ecc2024team3/oimarket/controller/BookmarkController.class
 io/github/ecc2024team3/oimarket/service/PostService.class
 io/github/ecc2024team3/oimarket/entity/Post$PostBuilder.class
+io/github/ecc2024team3/oimarket/entity/Condition.class
 io/github/ecc2024team3/oimarket/repository/CommentRepository.class
 io/github/ecc2024team3/oimarket/entity/Bookmark$BookmarkBuilder.class
 io/github/ecc2024team3/oimarket/controller/PostController.class

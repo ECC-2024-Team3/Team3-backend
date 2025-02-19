@@ -5,6 +5,7 @@ import io.github.ecc2024team3.oimarket.dto.PostSearchDTO;
 import io.github.ecc2024team3.oimarket.dto.PostCreateDTO;
 import io.github.ecc2024team3.oimarket.dto.PostUpdateDTO;
 import io.github.ecc2024team3.oimarket.entity.Category;
+import io.github.ecc2024team3.oimarket.entity.Condition;
 import io.github.ecc2024team3.oimarket.entity.Post;
 import io.github.ecc2024team3.oimarket.entity.TransactionStatus;
 import io.github.ecc2024team3.oimarket.entity.User;
@@ -51,6 +52,9 @@ public class PostService {
         if (postDTO.getCategory() == null) {
             throw new IllegalArgumentException("카테고리를 선택해주세요.");
         }
+        if (postDTO.getCondition() == null) {
+            throw new IllegalArgumentException("제품상태를 선택해주세요.");
+        }
     
         TransactionStatus status = (postDTO.getTransactionStatus() != null)
                 ? TransactionStatus.valueOf(postDTO.getTransactionStatus())
@@ -59,6 +63,7 @@ public class PostService {
         Post post = new Post(postDTO, user);
         post.setTransactionStatus(status);
         post.setCategory(Category.valueOf(postDTO.getCategory()));
+        post.setCondition(Condition.valueOf(postDTO.getCondition()));
     
         postRepository.save(post);
         
@@ -101,6 +106,8 @@ public class PostService {
                 .location(post.getLocation())
                 .price(post.getPrice())
                 .transactionStatus(post.getTransactionStatus().name())
+                .category(post.getCategory().name())
+                .condition(post.getCondition().name())
                 .content(post.getContent())
                 .representativeImage(representativeImage)
                 .likesCount(likesCount)
@@ -122,7 +129,6 @@ public class PostService {
             throw new RuntimeException("게시글을 수정할 권한이 없습니다.");
         }
     
-        // ✅ 필수 필드 검증 (null 또는 빈 값 불가)
         if (postUpdateDTO.getTitle() == null || postUpdateDTO.getTitle().isBlank()) {
             throw new IllegalArgumentException("제목을 입력해주세요.");
         }
@@ -135,11 +141,15 @@ public class PostService {
         if (postUpdateDTO.getCategory() == null) {
             throw new IllegalArgumentException("카테고리를 선택해주세요.");
         }
+        if (postUpdateDTO.getCondition() == null) {
+            throw new IllegalArgumentException("제품상태를 선택해주세요.");
+        }
     
         post.setTitle(postUpdateDTO.getTitle());
         post.setLocation(postUpdateDTO.getLocation());
         post.setPrice(postUpdateDTO.getPrice());
         post.setCategory(Category.valueOf(postUpdateDTO.getCategory()));
+        post.setCondition(Condition.valueOf(postUpdateDTO.getCondition()));
     
         if (postUpdateDTO.getTransactionStatus() != null) {
             post.setTransactionStatus(TransactionStatus.valueOf(postUpdateDTO.getTransactionStatus()));
@@ -172,6 +182,7 @@ public class PostService {
         Pageable pageable = PageRequest.of(page, size);
         TransactionStatus transactionStatus = null;
         Category category = null;
+        Condition condition = null;
         
         if (searchDTO.getTransactionStatus() != null) {
             transactionStatus = TransactionStatus.valueOf(searchDTO.getTransactionStatus());
@@ -181,10 +192,15 @@ public class PostService {
             category = Category.valueOf(searchDTO.getCategory());
         }
 
+        if (searchDTO.getCondition() != null) {
+            condition = Condition.valueOf(searchDTO.getCondition());
+        }
+
         Page<Post> posts = postRepository.searchPosts(
                 searchDTO.getKeyword(),
                 transactionStatus,
                 category,
+                condition,
                 searchDTO.getLocation(),
                 searchDTO.getMinPrice(),
                 searchDTO.getMaxPrice(),

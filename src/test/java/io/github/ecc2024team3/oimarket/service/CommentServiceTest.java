@@ -59,6 +59,7 @@ public class CommentServiceTest {
                 .price(10000)
                 .transactionStatus("ON_SALE")
                 .category("HOME_FOOD")
+                .condition("NEW")
                 .content("테스트 내용입니다.")
                 .images(new ArrayList<>())
                 .build();

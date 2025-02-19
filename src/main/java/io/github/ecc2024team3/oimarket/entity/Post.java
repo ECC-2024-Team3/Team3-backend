@@ -36,6 +36,10 @@ public class Post {
     @Column(nullable = false)
     private Category category;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Condition condition;
+
     @Column(columnDefinition = "TEXT")
     private String content;
 
@@ -47,13 +51,14 @@ public class Post {
     @Builder.Default
     private List<Image> images = new ArrayList<>();
 
-    // ✅ PostDTO → Post 엔티티 변환
     public Post(PostCreateDTO postDTO, User user) {
         this.user = user;
         this.title = postDTO.getTitle();
         this.location = postDTO.getLocation();
         this.price = postDTO.getPrice();
         this.transactionStatus = TransactionStatus.valueOf(postDTO.getTransactionStatus());
+        this.category = Category.valueOf(postDTO.getCategory());
+        this.condition = Condition.valueOf(postDTO.getCondition());
         this.content = postDTO.getContent();
         this.createdAt = LocalDateTime.now();
     }
