@@ -32,6 +32,10 @@ public class Post {
     @Column(nullable = false)
     private TransactionStatus transactionStatus;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Category category;
+
     @Column(columnDefinition = "TEXT")
     private String content;
 

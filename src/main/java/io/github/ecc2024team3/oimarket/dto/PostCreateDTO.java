@@ -4,17 +4,28 @@ import lombok.*;
 
 import java.util.List;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class PostCreateDTO {
-    private Long userId;
+    @NotBlank(message = "제목을 입력해주세요.") 
     private String title;
+
+    @NotBlank(message = "카테고리를 입력해주세요.") 
+    private String category;
+
+    @NotBlank(message = "장소를 입력해주세요.")
     private String location;
+
+    @NotNull(message = "가격을 입력해주세요.")
     private Integer price;
+
     private String transactionStatus;
     private String content;
-    private List<String> images; // 업로드할 이미지 URL 리스트
+    private List<String> images;
 }

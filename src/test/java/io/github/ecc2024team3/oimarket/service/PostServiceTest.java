@@ -54,7 +54,8 @@ public class PostServiceTest {
             .title("테스트 게시글")
             .location("서울")
             .price(10000)
-            .transactionStatus("ON_SALE")  // ✅ ENUM을 String으로 변환할 때 정확한 값 사용
+            .transactionStatus("ON_SALE")
+            .category("HOME_FOOD")
             .content("테스트 내용입니다.")
             .images(new ArrayList<>())  // ✅ 빈 리스트 추가
             .build();
@@ -68,6 +69,7 @@ public class PostServiceTest {
         assertThat(createdPost.getLocation()).isEqualTo("서울");
         assertThat(createdPost.getPrice()).isEqualTo(10000);
         assertThat(createdPost.getTransactionStatus()).isEqualTo("ON_SALE");
+        assertThat(createdPost.getCategory()).isEqualTo("HOME_FOOD");
         assertThat(createdPost.getContent()).isEqualTo("테스트 내용입니다.");
     }    
 }
