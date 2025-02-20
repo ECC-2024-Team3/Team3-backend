@@ -112,7 +112,7 @@ public class MyPageServiceTest {
 
     @Test
     void testGetUserPosts() {
-        Page<Long> userPosts = myPageService.getUserPosts(userId, 0, DEFAULT_PAGE_SIZE);
+        Page<PostDTO> userPosts = myPageService.getUserPosts(userId, 0, DEFAULT_PAGE_SIZE);
         assertThat(userPosts.getContent()).isNotNull();
         assertThat(userPosts.getContent()).isNotEmpty();
     }
@@ -128,28 +128,28 @@ public class MyPageServiceTest {
     @Test
     void testDeleteAllLikedPosts() {
         // ✅ 좋아요 추가 확인
-        Page<Long> likedPosts = myPageService.getLikedPosts(userId, 0, DEFAULT_PAGE_SIZE);
+        Page<PostDTO> likedPosts = myPageService.getLikedPosts(userId, 0, DEFAULT_PAGE_SIZE);
         assertThat(likedPosts.getContent()).isNotEmpty();
 
         // ✅ 좋아요 전체 삭제
         myPageService.deleteAllLikedPosts(userId);
 
         // ✅ 삭제 후 확인
-        Page<Long> afterDelete = myPageService.getLikedPosts(userId, 0, DEFAULT_PAGE_SIZE);
+        Page<PostDTO> afterDelete = myPageService.getLikedPosts(userId, 0, DEFAULT_PAGE_SIZE);
         assertThat(afterDelete.getContent()).isEmpty();
     }
 
     @Test
     void testDeleteAllBookmarkedPosts() {
         // ✅ 북마크 추가 확인
-        Page<Long> bookmarkedPosts = myPageService.getBookmarkedPosts(userId, 0, DEFAULT_PAGE_SIZE);
+        Page<PostDTO> bookmarkedPosts = myPageService.getBookmarkedPosts(userId, 0, DEFAULT_PAGE_SIZE);
         assertThat(bookmarkedPosts.getContent()).isNotEmpty();
 
         // ✅ 북마크 전체 삭제
         myPageService.deleteAllBookmarkedPosts(userId);
 
         // ✅ 삭제 후 확인
-        Page<Long> afterDelete = myPageService.getBookmarkedPosts(userId, 0, DEFAULT_PAGE_SIZE);
+        Page<PostDTO> afterDelete = myPageService.getBookmarkedPosts(userId, 0, DEFAULT_PAGE_SIZE);
         assertThat(afterDelete.getContent()).isEmpty();
     }
 }
