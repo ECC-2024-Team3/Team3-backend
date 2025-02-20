@@ -18,7 +18,7 @@ public class PostDTO {
     private Integer price;
     private String transactionStatus;
     private String category;
-    private String condition;
+    private String itemCondition;
     private String content;
     private String representativeImage;
     private int likesCount;
@@ -36,7 +36,7 @@ public class PostDTO {
         this.price = post.getPrice();
         this.transactionStatus = post.getTransactionStatus().name();
         this.category = post.getCategory().name();
-        this.condition = post.getCondition().name();
+        this.itemCondition = post.getItemCondition().name();
         this.content = post.getContent();
         this.representativeImage = representativeImage;
         this.likesCount = 0;

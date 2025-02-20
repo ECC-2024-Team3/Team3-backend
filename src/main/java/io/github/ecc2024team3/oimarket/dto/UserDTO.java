@@ -11,15 +11,15 @@ import lombok.*;
 public class UserDTO {
     private Long userId;
     private String email;
-    private String password; // ✅ getPassword()를 사용하기 위해 포함
+    private String password;
     private String nickname;
-    private String profileImage; // ✅ getProfileImage()를 사용하기 위해 포함
+    private String profileImage;
 
     // Entity -> DTO 변환 생성자
     public UserDTO(User user) {
         this.userId = user.getUserId();
         this.email = user.getEmail();
-        this.password = user.getPassword(); // ✅ User 엔티티의 password를 포함
+        this.password = user.getPassword();
         this.nickname = user.getNickname();
         this.profileImage = user.getProfileImage();
     }
