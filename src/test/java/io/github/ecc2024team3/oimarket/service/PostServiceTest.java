@@ -56,7 +56,7 @@ public class PostServiceTest {
             .price(10000)
             .transactionStatus("ON_SALE")
             .category("HOME_FOOD")
-            .condition("NEW")
+            .itemCondition("NEW")
             .content("테스트 내용입니다.")
             .images(new ArrayList<>())  // ✅ 빈 리스트 추가
             .build();
@@ -71,7 +71,7 @@ public class PostServiceTest {
         assertThat(createdPost.getPrice()).isEqualTo(10000);
         assertThat(createdPost.getTransactionStatus()).isEqualTo("ON_SALE");
         assertThat(createdPost.getCategory()).isEqualTo("HOME_FOOD");
-        assertThat(createdPost.getCondition()).isEqualTo("NEW");
+        assertThat(createdPost.getItemCondition()).isEqualTo("NEW");
         assertThat(createdPost.getContent()).isEqualTo("테스트 내용입니다.");
     }    
 }

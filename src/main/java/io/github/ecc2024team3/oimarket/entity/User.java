@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId; // ✅ 카멜 케이스 적용
+    private Long userId;
 
     @Column(nullable = false, unique = true, length = 255)
     private String email;
@@ -26,9 +26,9 @@ public class User {
     private String nickname;
 
     @Column(length = 500) // NULL 가능 (프로필 이미지가 없을 수도 있음)
-    private String profileImage; // ✅ 카멜 케이스 적용
+    private String profileImage;
 
     @Builder.Default
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now(); // ✅ 카멜 케이스 적용
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

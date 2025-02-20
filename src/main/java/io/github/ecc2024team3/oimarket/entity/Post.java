@@ -38,7 +38,7 @@ public class Post {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Condition condition;
+    private ItemCondition itemCondition;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -58,7 +58,7 @@ public class Post {
         this.price = postDTO.getPrice();
         this.transactionStatus = TransactionStatus.valueOf(postDTO.getTransactionStatus());
         this.category = Category.valueOf(postDTO.getCategory());
-        this.condition = Condition.valueOf(postDTO.getCondition());
+        this.itemCondition = ItemCondition.valueOf(postDTO.getItemCondition());
         this.content = postDTO.getContent();
         this.createdAt = LocalDateTime.now();
     }

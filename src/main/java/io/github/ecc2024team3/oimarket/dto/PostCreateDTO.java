@@ -26,7 +26,7 @@ public class PostCreateDTO {
     private String category;
 
     @NotBlank(message = "제품상태를 선택해주세요.")  
-    private String condition;
+    private String itemCondition;
 
     private String transactionStatus;
     private String content;
