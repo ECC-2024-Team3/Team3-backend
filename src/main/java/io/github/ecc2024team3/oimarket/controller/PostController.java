@@ -57,7 +57,7 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
-    // ✅ 검색 기능 (로그인한 사용자 ID 포함(좋아요/북마크 여부 확인을 위함))
+    // ✅ 검색 기능
     @GetMapping("/search")
     public ResponseEntity<Page<PostDTO>> searchPosts(
             @RequestParam(required = false) String keyword,
