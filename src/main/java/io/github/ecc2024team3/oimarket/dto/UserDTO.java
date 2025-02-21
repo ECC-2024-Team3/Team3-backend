@@ -12,6 +12,7 @@ public class UserDTO {
     private Long userId;
     private String email;
     private String password;
+    private String confirmPassword; // 추가
     private String nickname;
     private String profileImage;
 
