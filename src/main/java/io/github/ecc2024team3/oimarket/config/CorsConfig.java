@@ -17,11 +17,14 @@ public class CorsConfig {
         
         config.setAllowCredentials(true);
         config.setAllowedOriginPatterns(List.of(
-            "http://localhost:[0-9]+",
+            "http://localhost:3000",
+            "https://localhost:3000",
             "https://*.oimarket.com",
             "https://*.vercel.app",
             "http://oimarket-backend.ap-northeast-2.elasticbeanstalk.com",
-            "https://oimarket-backend.ap-northeast-2.elasticbeanstalk.com"
+            "https://oimarket-backend.ap-northeast-2.elasticbeanstalk.com",
+            // 하나씩 추가해야 하는 건지 실험 중
+            "http://oimarket-backend.ap-northeast-2.elasticbeanstalk.com/api/posts"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
