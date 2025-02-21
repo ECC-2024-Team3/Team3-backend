@@ -25,6 +25,10 @@ public class UserService {
     // 회원가입 (signup)
     @Transactional
     public Long signup(UserDTO userDto) {
+        if (userDto.getEmail() == null || userDto.getEmail().isBlank()) {
+            throw new IllegalArgumentException("이메일은 필수 입력 값입니다.");
+        }
+
         if (userDto.getConfirmPassword() != null && !userDto.getPassword().equals(userDto.getConfirmPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
@@ -35,11 +39,6 @@ public class UserService {
             throw new IllegalArgumentException("이메일 인증이 필요합니다.");
         }
 
-        // 아이디 중복 체크
-        Optional<User> existingUser = userRepository.findById(userDto.getUserId());
-        if (existingUser.isPresent()) {
-            throw new IllegalStateException("이미 사용 중인 id 입니다.");
-        }
 
         // 이메일 중복 체크
         Optional<User> existingEmail = userRepository.findByEmail(userDto.getEmail());
@@ -47,24 +46,32 @@ public class UserService {
             throw new IllegalStateException("이미 사용 중인 이메일입니다.");
         }
 
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(userDto.getPassword());
+
         // 사용자 정보 저장 (userRole 제거)
         User user = User.builder()
-                .userId(userDto.getUserId())
                 .email(userDto.getEmail())
-                .password(passwordEncoder.encode(userDto.getPassword()))
+                .password(encodedPassword) //암호화된 비밀번호를 저장
                 .nickname(userDto.getNickname())
                 .profileImage(userDto.getProfileImage())
                 .build();
 
-        userRepository.save(user);
+        user = userRepository.save(user); // 저장 후 반환값을 다시 할당
         redisUtil.deleteData(userDto.getEmail());
         return user.getUserId();
     }
 
     // 로그인 (JWT 토큰 반환)
+    @Transactional(readOnly = true)
     public String login(UserDTO userDTO) {
-        User user = userRepository.findByEmail(userDTO.getEmail())
+        System.out.println("로그인 시도 이메일: " + userDTO.getEmail());
+
+        User user = userRepository.findByEmail(userDTO.getEmail().trim())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
+
+        System.out.println("회원가입 이메일: " + user.getEmail());
+        System.out.println("DB에서 찾은 사용자 이메일: " + user.getEmail());
 
         if (!passwordEncoder.matches(userDTO.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
@@ -73,6 +80,5 @@ public class UserService {
         // userRole 제거 → 기본적으로 "ROLE_USER" 부여
         return jwtTokenProvider.createToken(user.getEmail(), List.of("ROLE_USER"));
     }
-
 
 }

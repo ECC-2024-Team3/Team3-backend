@@ -21,6 +21,12 @@ public class UserController {
     private final UserService userService; // UserService 사용
     private final RedisUtil redisUtil; // 이메일 인증 검증을 위한 RedisUtil 추가
 
+    @PostMapping("/force-verify")
+    public ResponseEntity<String> forceVerify(@RequestParam String email) {
+        redisUtil.setDataExpire(email, "verified", 600); // 10분간 유효
+        return ResponseEntity.ok("이메일 인증 강제 완료됨");
+    }
+
     //  로그인 → JWT 토큰 발급
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
