@@ -22,7 +22,7 @@ public class User implements UserDetails{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(nullable = false, unique = true, length = 255)
+    @Column(nullable = false, unique = true, length = 32)
     private String email;
 
     @Column(nullable = false, length = 60) // 비밀번호 해싱을 고려하여 적절한 길이 설정

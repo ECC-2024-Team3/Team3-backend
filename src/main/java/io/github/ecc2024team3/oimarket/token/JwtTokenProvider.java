@@ -5,7 +5,6 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +23,6 @@ import java.util.List;
 public class JwtTokenProvider {
     //  JWT 서명 키 (반드시 256비트 이상)
     private final String secretKey = "your-very-secret-key-your-very-secret-key";
-    private final long validityInMilliseconds = 3600000; // 1시간
 
     //  Key 타입의 secretKey 초기화
     private final Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
@@ -38,6 +36,8 @@ public class JwtTokenProvider {
         claims.put("roles", roles);
 
         Date now = new Date();
+        // 1시간
+        long validityInMilliseconds = 3600000;
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
         return Jwts.builder()

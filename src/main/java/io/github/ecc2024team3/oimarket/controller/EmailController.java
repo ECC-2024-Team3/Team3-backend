@@ -3,8 +3,6 @@ package io.github.ecc2024team3.oimarket.controller;
 import io.github.ecc2024team3.oimarket.dto.EmailDTO;
 import io.github.ecc2024team3.oimarket.service.EmailService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

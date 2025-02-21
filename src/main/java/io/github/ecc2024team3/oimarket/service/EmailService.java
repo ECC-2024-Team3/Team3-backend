@@ -10,8 +10,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import java.util.Random;
 
@@ -22,7 +20,6 @@ public class EmailService {
     private final JavaMailSender javaMailSender;
     private final RedisUtil redisUtil;
     private static final String senderEmail = "sanbyul1@naver.com";
-
     private final TemplateEngine templateEngine;
 
     // 인증 코드 생성 (6자리 랜덤 문자열)
@@ -39,19 +36,6 @@ public class EmailService {
                 .toString();
     }
 
-    // 이메일 템플릿 엔진 설정 (초기화 한 번만 수행)
-    private static TemplateEngine initTemplateEngine() {
-        TemplateEngine templateEngine = new TemplateEngine();
-        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-
-        templateResolver.setPrefix("templates/");
-        templateResolver.setSuffix(".html");
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        templateResolver.setCacheable(false);
-
-        templateEngine.setTemplateResolver(templateResolver);
-        return templateEngine;
-    }
 
     // 이메일 내용 구성
     private String setContext(String code) {

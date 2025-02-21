@@ -31,7 +31,7 @@ public class UserController {
     //  회원가입 (이메일 인증 검증 포함)
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody UserDTO userDTO) {
-        //  이메일 인증 여부 확인 (Redis에 저장된 인증 코드 체크)
+        //  이메일 인증 여부 확인 ( redis에 저장된 인증 코드 체크)
         String storedCode = redisUtil.getData(userDTO.getEmail());
         if (storedCode == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)

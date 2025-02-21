@@ -25,7 +25,6 @@ public class UserService {
     // 회원가입 (signup)
     @Transactional
     public Long signup(UserDTO userDto) {
-        // `getConfirmPassword()`가 없는 경우, UserDTO에 추가해야 함
         if (userDto.getConfirmPassword() != null && !userDto.getPassword().equals(userDto.getConfirmPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
@@ -39,7 +38,7 @@ public class UserService {
         // 아이디 중복 체크
         Optional<User> existingUser = userRepository.findById(userDto.getUserId());
         if (existingUser.isPresent()) {
-            throw new IllegalStateException("이미 사용 중인 ID입니다.");
+            throw new IllegalStateException("이미 사용 중인 id 입니다.");
         }
 
         // 이메일 중복 체크
@@ -75,11 +74,5 @@ public class UserService {
         return jwtTokenProvider.createToken(user.getEmail(), List.of("ROLE_USER"));
     }
 
-    // 사용자 정보 조회
-    @Transactional(readOnly = true)
-    public UserDTO getUserByEmail(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-        return new UserDTO(user);
-    }
+
 }
