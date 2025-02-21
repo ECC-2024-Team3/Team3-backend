@@ -37,14 +37,14 @@ ECC-2024-Team3/
 ### **1. 백엔드 실행 방법**
 ```bash
 # 프로젝트 클론
-git clone https://github.com/ecc2024team3/oimarket.git
+git clone https://github.com/ECC-2024-Team3/Team3-backend.git
 cd oimarket/backend
 
 # MySQL 실행 및 설정
 mysql -u root -p  # MySQL 로그인 후 데이터베이스 생성
 CREATE DATABASE oimarket;
 
-# application.properties 또는 application.yml 설정
+# application.properties 수정
 spring.datasource.url=jdbc:mysql://localhost:3306/oimarket
 spring.datasource.username=root
 spring.datasource.password=yourpassword
