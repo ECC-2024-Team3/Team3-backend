@@ -22,15 +22,13 @@ public class CorsConfig {
             "https://*.oimarket.com",
             "https://*.vercel.app",
             "http://oimarket-backend.ap-northeast-2.elasticbeanstalk.com",
-            "https://oimarket-backend.ap-northeast-2.elasticbeanstalk.com",
-            // 하나씩 추가해야 하는 건지 실험 중
-            "http://oimarket-backend.ap-northeast-2.elasticbeanstalk.com/api/posts"
+            "https://oimarket-backend.ap-northeast-2.elasticbeanstalk.com"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", config);
+        source.registerCorsConfiguration("/**", config); // 모든 경로에 적용
 
         return source;
     }
