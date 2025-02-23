@@ -5,7 +5,6 @@ import io.github.ecc2024team3.oimarket.dto.CommentDTO;
 import io.github.ecc2024team3.oimarket.dto.PostDTO;
 import io.github.ecc2024team3.oimarket.dto.PostUpdateDTO;
 import io.github.ecc2024team3.oimarket.service.MyPageService;
-import io.github.ecc2024team3.oimarket.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
