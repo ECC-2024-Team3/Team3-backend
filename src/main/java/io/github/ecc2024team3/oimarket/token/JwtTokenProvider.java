@@ -58,6 +58,17 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
+    // 토큰의 만료 시간을 가져오는 메서드 추가
+    public long getExpiration(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration()
+                .getTime();  // 초 단위로 변환
+    }
+
     //  resolveToken() 추가
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
