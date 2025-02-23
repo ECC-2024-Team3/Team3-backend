@@ -18,7 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
-import org.springframework.web.cors.CorsConfiguration;
+//import org.springframework.web.cors.CorsConfiguration;
 //스프링 시큐리티는 웹 사이트의 콘텐츠가 다른 사이트에 포함되지 않도록 X-Frame-Options헤더의 기본값을 deny함. 이를 수정할 예정
 
 @Configuration
