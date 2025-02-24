@@ -70,6 +70,14 @@ public class UserService {
         return jwtTokenProvider.createToken(user.getEmail(), List.of("ROLE_USER"));
     }
 
+    // 회원 탈퇴
+    public void deleteUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        userRepository.delete(user); // DB에서 유저 삭제
+    }
+
     //이메일 강제 인증 메서드 추가
     @Transactional
     public void verifyUser(String email) {
@@ -88,6 +96,7 @@ public class UserService {
         user.setVerified(true);
         userRepository.save(user);
     }
+
 
 
 }

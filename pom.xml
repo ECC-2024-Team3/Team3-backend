@@ -22,6 +22,13 @@
     </properties>
 
     <dependencies>
+        <!--mysql-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
+        </dependency>
+
         <!--  Spring Boot 웹 애플리케이션 기본 설정 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -74,32 +81,32 @@
         </dependency>
 
 
-        <!-- ✅ Spring Boot Mail -->
+        <!--  Spring Boot Mail -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
-        <!-- ✅ Thymeleaf -->
+        <!--  Thymeleaf -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
-        <!-- ✅ Jakarta Mail API -->
+        <!--  Jakarta Mail API -->
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>jakarta.mail</artifactId>
             <version>2.0.1</version>
         </dependency>
 
-        <!-- ✅ Redis (Spring Data) -->
+        <!--  Redis (Spring Data) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
-        <!-- ✅ JWT (Json Web Token) -->
+        <!--  JWT (Json Web Token) -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>

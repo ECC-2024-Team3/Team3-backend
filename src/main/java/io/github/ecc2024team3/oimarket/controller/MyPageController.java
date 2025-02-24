@@ -8,8 +8,10 @@ import io.github.ecc2024team3.oimarket.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 
@@ -18,8 +20,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MyPageController {
     private final MyPageService myPageService;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(); //비밀번호 해싱
 
-    /*
+
     // 현재 로그인한 사용자 ID 검증
     private Long getAuthenticatedUserId(Long userId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -29,7 +32,7 @@ public class MyPageController {
         }
         return authenticatedUserId;
     }
-     */
+
 
     // 사용자가 작성한 모든 게시글 조회 (페이징 적용)
     @GetMapping("/posts")
@@ -152,6 +155,11 @@ public class MyPageController {
     @PatchMapping("/info")
     public ResponseEntity<UserDTO> updateUserInfo(@RequestBody UserDTO userDTO, Authentication authentication) {
         String email = authentication.getName();
+
+        if (userDTO.getPassword() != null) {
+            userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword())); // 비밀번호 해싱 후 저장
+        }
+
         return ResponseEntity.ok(myPageService.updateUserInfo(email, userDTO));
     }
 

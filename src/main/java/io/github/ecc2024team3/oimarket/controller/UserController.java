@@ -101,6 +101,40 @@ public class UserController {
         }
     }
 
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteUser(@RequestHeader("Authorization") String token) {
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7); // "Bearer " 제거
+        }
+
+        // JWT 토큰 유효성 검사
+        if (!jwtTokenProvider.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+        }
+
+        // 토큰에서 email 추출
+        String email = jwtTokenProvider.getEmail(token);
+
+        try {
+            // 유저 삭제 처리
+            userService.deleteUserByEmail(email);
+
+            // 토큰 블랙리스트 추가 (로그아웃과 동일한 처리)
+            long expiration = jwtTokenProvider.getExpiration(token) - System.currentTimeMillis();
+            if (expiration > 0) {
+                redisUtil.addToBlacklist(token, expiration);
+            }
+
+            // SecurityContext 초기화
+            SecurityContextHolder.clearContext();
+
+            return ResponseEntity.ok("계정이 삭제되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("유저 탈퇴 중 오류 발생: " + e.getMessage());
+        }
+    }
+
 
 }
 
