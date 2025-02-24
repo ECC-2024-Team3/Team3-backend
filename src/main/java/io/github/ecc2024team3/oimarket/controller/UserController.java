@@ -52,7 +52,7 @@ public class UserController {
         }
     }
     //  로그인 → JWT 토큰 발급
-    @RequestMapping(value = "/login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
         String token = userService.login(userDTO);
         return ResponseEntity.ok().body(token);
