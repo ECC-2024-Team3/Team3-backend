@@ -49,7 +49,7 @@ public class MyPageController {
     }
 
     // 게시글 수정
-    @PutMapping("/posts/{postId}")
+    @PatchMapping("/posts/{postId}")
     public ResponseEntity<PostDTO> updateMyPost(@RequestParam Long userId, @PathVariable Long postId, @RequestBody PostUpdateDTO postUpdateDTO) {
         return ResponseEntity.ok(myPageService.updateMyPost(userId, postId, postUpdateDTO));
     }
