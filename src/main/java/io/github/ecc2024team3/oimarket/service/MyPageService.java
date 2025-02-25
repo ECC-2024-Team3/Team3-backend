@@ -1,12 +1,14 @@
 package io.github.ecc2024team3.oimarket.service;
 
+import io.github.ecc2024team3.oimarket.entity.User;
+import io.github.ecc2024team3.oimarket.repository.UserRepository;
 import io.github.ecc2024team3.oimarket.dto.*;
 import io.github.ecc2024team3.oimarket.entity.Bookmark;
 import io.github.ecc2024team3.oimarket.entity.Image;
 import io.github.ecc2024team3.oimarket.entity.Like;
 import io.github.ecc2024team3.oimarket.entity.Post;
 import io.github.ecc2024team3.oimarket.repository.*;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +26,7 @@ public class MyPageService {
     private final LikeRepository likeRepository;
     private final BookmarkRepository bookmarkRepository;
     private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
 
     private final PostService postService;
     private final CommentService commentService;
@@ -159,4 +162,64 @@ public class MyPageService {
     public void deleteUserComment(Long commentId, Long userId) {
         commentService.deleteComment(commentId, userId);
     }
+
+    //  사용자 정보 조회
+    @Transactional(readOnly = true)
+    public UserDTO getUserInfo(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 사용자를 찾을 수 없습니다."));
+        return convertToDTO(user);
+    }
+
+    // 사용자 정보 등록
+    @Transactional
+    public UserDTO createUserInfo(String email, UserDTO userDTO) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 사용자를 찾을 수 없습니다."));
+
+        user.setMajor(userDTO.getMajor());
+        user.setGrade(userDTO.getGrade());
+
+        userRepository.save(user);
+        return convertToDTO(user);
+    }
+
+    // 사용자 정보 수정
+    @Transactional
+    public UserDTO updateUserInfo(String email, UserDTO userDTO) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 사용자를 찾을 수 없습니다."));
+
+        if (userDTO.getPassword() != null) {
+            user.setPassword(userDTO.getPassword()); // 비밀번호 변경
+        }
+        if (userDTO.getMajor() != null) {
+            user.setMajor(userDTO.getMajor());
+        }
+        if (userDTO.getGrade() != null) {
+            user.setGrade(userDTO.getGrade());
+        }
+
+        userRepository.save(user);
+        return convertToDTO(user);
+    }
+
+    // 사용자 정보 삭제
+    @Transactional
+    public void deleteUserInfo(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 사용자를 찾을 수 없습니다."));
+        userRepository.delete(user);
+    }
+
+    // ✅ User → UserDTO 변환 메서드
+    private UserDTO convertToDTO(User user) {
+        return UserDTO.builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .major(user.getMajor())
+                .grade(user.getGrade())
+                .build();
+    }
 }
+

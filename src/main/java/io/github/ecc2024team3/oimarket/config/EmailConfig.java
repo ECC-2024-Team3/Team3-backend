@@ -57,12 +57,12 @@ public class EmailConfig {
 
     private Properties getMailProperties() {
         Properties properties = new Properties();
-        properties.put("mail.smtp.auth", String.valueOf(auth));  // ✅ boolean → String 변환
-        properties.put("mail.smtp.starttls.enable", String.valueOf(starttlsEnable)); // ✅ boolean → String 변환
-        properties.put("mail.smtp.starttls.required", String.valueOf(starttlsRequired)); // ✅ boolean → String 변환
-        properties.put("mail.smtp.connectiontimeout", String.valueOf(connectionTimeout)); // ✅ int → String 변환
-        properties.put("mail.smtp.timeout", String.valueOf(timeout)); // ✅ int → String 변환
-        properties.put("mail.smtp.writetimeout", String.valueOf(writeTimeout)); // ✅ int → String 변환
+        properties.put("mail.smtp.auth", String.valueOf(auth));  //  boolean → String 변환
+        properties.put("mail.smtp.starttls.enable", String.valueOf(starttlsEnable)); //  boolean → String 변환
+        properties.put("mail.smtp.starttls.required", String.valueOf(starttlsRequired)); //  boolean → String 변환
+        properties.put("mail.smtp.connectiontimeout", String.valueOf(connectionTimeout)); //  int → String 변환
+        properties.put("mail.smtp.timeout", String.valueOf(timeout)); //  int → String 변환
+        properties.put("mail.smtp.writetimeout", String.valueOf(writeTimeout)); //  int → String 변환
 
         return properties;
     }
@@ -70,8 +70,8 @@ public class EmailConfig {
     @Bean
     public ClassLoaderTemplateResolver templateResolver() {
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setPrefix("templates/"); // ✅ `resources/templates/` 경로 설정
-        templateResolver.setSuffix(".html"); // ✅ `.html` 확장자 사용
+        templateResolver.setPrefix("templates/"); // `resources/templates/` 경로 설정
+        templateResolver.setSuffix(".html"); //  `.html` 확장자 사용
         templateResolver.setTemplateMode("HTML");
         templateResolver.setCacheable(false);
         return templateResolver;

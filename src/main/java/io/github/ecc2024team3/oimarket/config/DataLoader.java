@@ -31,6 +31,8 @@ public class DataLoader implements CommandLineRunner {
                     .password(passwordEncoder.encode("password123"))
                     .nickname("testuser")
                     .profileImage("https://example.com/profile1.jpg")
+                    .major("Computer Science")
+                    .grade("3")
                     .createdAt(LocalDateTime.now())
                     .build();
 
@@ -39,6 +41,8 @@ public class DataLoader implements CommandLineRunner {
                     .password(passwordEncoder.encode("password123"))
                     .nickname("eccteam3")
                     .profileImage("https://example.com/profile2.jpg")
+                    .major("Computer Science")
+                    .grade("3")
                     .createdAt(LocalDateTime.now())
                     .build();
 
@@ -46,6 +50,8 @@ public class DataLoader implements CommandLineRunner {
                     .email("ewha1886@example.com")
                     .password(passwordEncoder.encode("password123"))
                     .nickname("ewha1886")
+                    .major("Computer Science")
+                    .grade("3")
                     .profileImage("https://example.com/profile3.jpg")
                     .createdAt(LocalDateTime.now())
                     .build();

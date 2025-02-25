@@ -15,6 +15,8 @@ public class UserDTO {
     private String confirmPassword; // 추가
     private String nickname;
     private String profileImage;
+    private String major;  // 전공
+    private String grade;  // 학년
 
     // Entity -> DTO 변환 생성자
     public UserDTO(User user) {
@@ -23,5 +25,7 @@ public class UserDTO {
         this.password = user.getPassword();
         this.nickname = user.getNickname();
         this.profileImage = user.getProfileImage();
+        this.major = user.getMajor();
+        this.grade = user.getGrade();
     }
 }

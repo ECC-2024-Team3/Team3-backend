@@ -30,16 +30,11 @@ public class UserService {
         }
 
         // 이메일 인증 여부 확인
-        String storedCode = redisUtil.getData(userDto.getEmail());
-        if (storedCode == null) {
+        String storedCode = redisUtil.getData("email_verified:" + userDto.getEmail());
+        if (storedCode == null|| !storedCode.equals("true")) {
             throw new IllegalArgumentException("이메일 인증이 필요합니다.");
         }
 
-        // 아이디 중복 체크
-        Optional<User> existingUser = userRepository.findById(userDto.getUserId());
-        if (existingUser.isPresent()) {
-            throw new IllegalStateException("이미 사용 중인 id 입니다.");
-        }
 
         // 이메일 중복 체크
         Optional<User> existingEmail = userRepository.findByEmail(userDto.getEmail());
@@ -54,10 +49,11 @@ public class UserService {
                 .password(passwordEncoder.encode(userDto.getPassword()))
                 .nickname(userDto.getNickname())
                 .profileImage(userDto.getProfileImage())
+                .isVerified(true)  // 기본값으로 false 설정
                 .build();
 
         userRepository.save(user);
-        redisUtil.deleteData(userDto.getEmail());
+        redisUtil.deleteData("email_verified:" + userDto.getEmail());
         return user.getUserId();
     }
 
@@ -73,6 +69,34 @@ public class UserService {
         // userRole 제거 → 기본적으로 "ROLE_USER" 부여
         return jwtTokenProvider.createToken(user.getEmail(), List.of("ROLE_USER"));
     }
+
+    // 회원 탈퇴
+    public void deleteUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        userRepository.delete(user); // DB에서 유저 삭제
+    }
+
+    //이메일 강제 인증 메서드 추가
+    @Transactional
+    public void verifyUser(String email) {
+        // 먼저 Redis에서 이메일 인증 여부 확인
+        String emailVerificationStatus = redisUtil.getData("email_verified:" + email);
+
+        // Redis에 인증 정보가 없으면 예외 발생
+        if (emailVerificationStatus == null || !emailVerificationStatus.equals("true")) {
+            throw new IllegalArgumentException("이메일 인증 정보가 존재하지 않습니다.");
+        }
+
+        // 유저가 존재하는 경우 이메일 인증 상태 업데이트
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
+
+        user.setVerified(true);
+        userRepository.save(user);
+    }
+
 
 
 }
