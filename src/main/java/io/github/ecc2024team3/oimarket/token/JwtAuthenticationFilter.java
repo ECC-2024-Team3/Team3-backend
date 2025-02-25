@@ -29,7 +29,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/api/users/signup") || path.startsWith("/api/users/login") || path.startsWith("/api/users/force-verified?emali=test11@example.com"); // 회원가입 & 로그인은 필터 제외
+        return path.startsWith("/api/users/signup") || path.startsWith("/api/users/login") || path.startsWith("/api/users/force-verified?emali=test11@example.com") // 회원가입 & 로그인은 필터 제외
+        ||path.startsWith("/api/comments/post/"); //댓글 조회는 필터 제외
     }
 
 

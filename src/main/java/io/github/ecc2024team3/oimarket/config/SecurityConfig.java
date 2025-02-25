@@ -47,6 +47,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/force-verified").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users/signup", "/api/users/login").permitAll()
+                        .requestMatchers("/api/comments/post/**").permitAll() // 댓글 조회는 누구나 접근 가능
+                        .requestMatchers("/api/comments/**", "/api/mypage/**").authenticated() // 댓글 작성/수정/삭제, 마이페이지는 인증 필요
+                        .anyRequest().permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().permitAll()
                 )
