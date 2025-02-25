@@ -2,7 +2,6 @@ package io.github.ecc2024team3.oimarket.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,7 +19,7 @@ public class User {
     @Column(nullable = false, unique = true, length = 32)
     private String email;
 
-    @Column(nullable = false, length = 60) // 비밀번호 해싱을 고려하여 적절한 길이 설정
+    @Column(nullable = false, length = 150) // 비밀번호 해싱을 고려하여 적절한 길이 설정
     private String password;
 
     @Column(nullable = false, unique = true, length = 100)

@@ -15,8 +15,8 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @RequiredArgsConstructor
@@ -28,6 +28,8 @@ public class JwtTokenProvider {
     private final Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 
     private final UserDetailsService userDetailsService;
+
+    private final Map<String, Boolean> tokenBlacklist = Collections.synchronizedMap(new HashMap<>());
 
 
     //  JWT 생성
@@ -76,6 +78,9 @@ public class JwtTokenProvider {
 
     //  JWT 토큰 유효성 검증
     public boolean validateToken(String token) {
+        if (tokenBlacklist.containsKey(token)) {
+            return false; // 로그아웃된 토큰은 무효화
+        }
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
