@@ -83,7 +83,7 @@ public class MyPageController {
             @RequestParam Long userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {  // 기본값 size=10
-                return ResponseEntity.ok(myPageService.getBookmarkedPosts(userId, page, size));
+            return ResponseEntity.ok(myPageService.getBookmarkedPosts(userId, page, size));
     }
 
     // 선택한 북마크 해제
