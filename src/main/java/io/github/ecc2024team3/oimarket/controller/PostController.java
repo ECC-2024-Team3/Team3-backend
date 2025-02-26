@@ -5,6 +5,7 @@ import io.github.ecc2024team3.oimarket.dto.PostSearchDTO;
 import io.github.ecc2024team3.oimarket.dto.PostCreateDTO;
 import io.github.ecc2024team3.oimarket.dto.PostUpdateDTO;
 import io.github.ecc2024team3.oimarket.service.PostService;
+import io.github.ecc2024team3.oimarket.token.JwtTokenProvider;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,17 +15,21 @@ import org.springframework.data.domain.Page;
 @RequestMapping("/api/posts")
 public class PostController {
     private final PostService postService;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public PostController(PostService postService) {
+    public PostController(PostService postService, JwtTokenProvider jwtTokenProvider) {
         this.postService = postService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     // ✅ 게시글 생성 (POST /api/posts)
     @PostMapping
     public ResponseEntity<PostDTO> createPost(@RequestBody @Valid PostCreateDTO postCreateDTO,
-                                              @RequestParam Long userId) {
+                                              @RequestHeader("Authorization") String token) {
+        Long userId = jwtTokenProvider.getUserIdFromToken(token);
         return ResponseEntity.ok(postService.createPost(postCreateDTO, userId));
     }
+
 
     // ✅ 전체 게시글 조회 (로그인한 사용자 ID 포함(좋아요/북마크 여부 확인을 위함))
     @GetMapping
@@ -44,15 +49,17 @@ public class PostController {
     // ✅ 게시글 수정 (PATCH /api/posts/{postId})
     @PatchMapping("/{postId}")
     public ResponseEntity<PostDTO> updatePost(@PathVariable Long postId,
-                                              @RequestParam Long userId,
+                                              @RequestHeader("Authorization") String token,
                                               @RequestBody PostUpdateDTO postUpdateDTO) {
+        Long userId = jwtTokenProvider.getUserIdFromToken(token);
         return ResponseEntity.ok(postService.updatePost(postId, userId, postUpdateDTO));
     }
 
     // ✅ 게시글 삭제 (DELETE /api/posts/{postId})
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(@PathVariable Long postId,
-                                           @RequestParam Long userId) {
+                                           @RequestHeader("Authorization") String token) {
+        Long userId = jwtTokenProvider.getUserIdFromToken(token);
         postService.deletePost(postId, userId);
         return ResponseEntity.noContent().build();
     }

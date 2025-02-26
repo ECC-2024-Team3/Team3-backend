@@ -16,14 +16,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         
         config.setAllowCredentials(true);
-        config.setAllowedOriginPatterns(List.of(
-            "http://localhost:3000",
-            "https://localhost:3000",
-            "https://*.oimarket.com",
-            "https://*.vercel.app",
-            "http://oimarket-backend.ap-northeast-2.elasticbeanstalk.com",
-            "https://oimarket-backend.ap-northeast-2.elasticbeanstalk.com"
-        ));
+        config.setAllowedOrigins(List.of("*")); // ✅ 모든 도메인 허용 (테스트용)
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
 
