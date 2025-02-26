@@ -37,9 +37,9 @@ public class PostController {
     // ✅ 개별 게시글 조회 (GET /api/posts/{postId})
     @GetMapping("/{postId}")
     public ResponseEntity<PostDTO> getPostById(@PathVariable Long postId,
-                                               @RequestParam Long userId) {
+                                               @RequestParam(required = false) Long userId) {  // ✅ `required = false` 추가
         return ResponseEntity.ok(postService.getPostById(postId, userId));
-    }
+    }    
 
     // ✅ 게시글 수정 (PATCH /api/posts/{postId})
     @PatchMapping("/{postId}")

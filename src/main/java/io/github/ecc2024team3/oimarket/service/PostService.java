@@ -91,14 +91,16 @@ public class PostService {
     public PostDTO getPostById(Long postId, Long userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
-
+    
         int likesCount = likeRepository.countByPost_PostId(postId);
         int bookmarksCount = bookmarkRepository.countByPost_PostId(postId);
-        boolean liked = likeRepository.existsByUser_UserIdAndPost_PostId(userId, postId);
-        boolean bookmarked = bookmarkRepository.existsByUser_UserIdAndPost_PostId(userId, postId);
-
+        
+        // ✅ userId가 null이면 기본값(false) 설정
+        boolean liked = (userId != null) && likeRepository.existsByUser_UserIdAndPost_PostId(userId, postId);
+        boolean bookmarked = (userId != null) && bookmarkRepository.existsByUser_UserIdAndPost_PostId(userId, postId);
+    
         String representativeImage = post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl();
-
+    
         return PostDTO.builder()
                 .postId(post.getPostId())
                 .userId(post.getUser().getUserId())
@@ -112,12 +114,13 @@ public class PostService {
                 .representativeImage(representativeImage)
                 .likesCount(likesCount)
                 .bookmarksCount(bookmarksCount)
-                .liked(liked)
-                .bookmarked(bookmarked)
+                .liked(liked)   // ✅ userId가 없으면 기본 false 반환
+                .bookmarked(bookmarked)  // ✅ userId가 없으면 기본 false 반환
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
     }
+    
 
     // ✅ 게시글 수정 (Update)
     @Transactional
