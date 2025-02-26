@@ -9,7 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -55,8 +57,7 @@ public class UserService {
         return user.getUserId();
     }
 
-    // 로그인 (JWT 토큰 반환)
-    public String login(UserDTO userDTO) {
+    public Map<String, String> login(UserDTO userDTO) {
         User user = userRepository.findByEmail(userDTO.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
 
@@ -64,7 +65,14 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        return jwtTokenProvider.createToken(user.getEmail(), List.of("ROLE_USER"));
+        // 토큰 생성
+        String token = jwtTokenProvider.createToken(user.getEmail(), List.of("ROLE_USER"));
+
+        // JSON 형식으로 반환하기 위해 Map 사용
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+
+        return response;
     }
 
     //  로그아웃 (토큰 블랙리스트에 추가)

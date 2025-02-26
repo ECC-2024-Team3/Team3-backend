@@ -1,4 +1,4 @@
-package io.github.ecc2024team3.oimarket.controller;
+package  io.github.ecc2024team3.oimarket.controller;
 
 import io.github.ecc2024team3.oimarket.dto.UserDTO;
 import io.github.ecc2024team3.oimarket.service.UserService;
@@ -21,9 +21,9 @@ public class UserController {
 
     // 로그인 → JWT 토큰 발급
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
-        String token = userService.login(userDTO);
-        return ResponseEntity.ok().body(token);
+    public ResponseEntity<Map<String, String>> login(@RequestBody UserDTO userDTO) {
+        Map<String, String> tokenResponse = userService.login(userDTO);
+        return ResponseEntity.ok(tokenResponse);
     }
 
     // 회원가입 (이메일 인증 없이 진행)
