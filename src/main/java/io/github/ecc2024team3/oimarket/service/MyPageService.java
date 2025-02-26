@@ -212,7 +212,7 @@ public class MyPageService {
         userRepository.delete(user);
     }
 
-    // ✅ User → UserDTO 변환 메서드
+    //  User → UserDTO 변환 메서드
     private UserDTO convertToDTO(User user) {
         return UserDTO.builder()
                 .userId(user.getUserId())

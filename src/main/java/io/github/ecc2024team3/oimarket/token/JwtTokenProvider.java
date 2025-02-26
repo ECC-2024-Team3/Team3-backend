@@ -15,8 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -29,6 +28,7 @@ public class JwtTokenProvider {
 
     private final UserDetailsService userDetailsService;
 
+    private final Map<String, Boolean> tokenBlacklist = Collections.synchronizedMap(new HashMap<>());
 
     //  JWT 생성
     public String createToken(String email, List<String> roles) {
@@ -58,18 +58,7 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
-    // 토큰의 만료 시간을 가져오는 메서드 추가
-    public long getExpiration(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getExpiration()
-                .getTime();  // 초 단위로 변환
-    }
-
-    //  resolveToken() 추가
+    //  resolveToken() 수정 (static 제거)
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
@@ -78,7 +67,7 @@ public class JwtTokenProvider {
         return null;
     }
 
-    // 사용자 인증(Authentication) 객체 생성 (오류 해결)
+    // 사용자 인증(Authentication) 객체 생성
     public Authentication getAuthentication(String token) {
         String email = getEmail(token); //  토큰에서 사용자 이메일(아이디) 추출
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
@@ -87,6 +76,9 @@ public class JwtTokenProvider {
 
     //  JWT 토큰 유효성 검증
     public boolean validateToken(String token) {
+        if (tokenBlacklist.containsKey(token)) {
+            return false; // 로그아웃된 토큰은 무효화
+        }
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
@@ -94,7 +86,5 @@ public class JwtTokenProvider {
             return false;
         }
     }
-
 }
-
 

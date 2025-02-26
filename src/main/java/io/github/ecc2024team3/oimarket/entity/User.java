@@ -35,9 +35,6 @@ public class User {
     @Column(length = 10)  // 학년 (mypage 기능)
     private String grade;
 
-    @Column(nullable = false)
-    private boolean isVerified = false;
-
     @Builder.Default
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
