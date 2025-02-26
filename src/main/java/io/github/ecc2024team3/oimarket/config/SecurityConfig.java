@@ -5,6 +5,7 @@ import io.github.ecc2024team3.oimarket.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,8 +36,13 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/signup", "/api/users/login", "/h2-console/**", "/swagger-ui/**").permitAll()
-                        .requestMatchers("/api/**").permitAll()
-                        .anyRequest().permitAll()
+                        .requestMatchers(HttpMethod.GET, "/").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/api/posts/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/posts/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/posts/**/likes").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/posts/**/bookmarks").authenticated()
+                        .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.accessDeniedPage("/403"))
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
