@@ -17,7 +17,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
-import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -30,7 +29,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .addFilterBefore(new CorsFilter(corsConfigurationSource), UsernamePasswordAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -38,16 +36,14 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/signup", "/api/users/login", "/h2-console/**", "/swagger-ui/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/comments/post/**").permitAll()
+                        .requestMatchers("/api/comments/**").authenticated()
                         .requestMatchers(HttpMethod.PATCH, "/api/posts/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/posts/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/posts/**/likes").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/posts/**/bookmarks").authenticated()
-                        // ✅ 댓글 조회는 인증 없이 접속 가능
-                        .requestMatchers("/api/comments/post/**").permitAll()
-                        .requestMatchers(
-                                // ✅ 댓글 작성, 수정, 삭제, 마이페이지는 토큰 필요
-                                "/api/comments/**", "/api/mypage/**").authenticated()
-                        .anyRequest().permitAll()
+                        .requestMatchers("/api/mypage/**").authenticated()
+                        .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.accessDeniedPage("/403"))
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
@@ -70,5 +66,3 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }
-
-
