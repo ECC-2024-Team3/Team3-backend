@@ -23,15 +23,15 @@ public class UserService {
     private final ConcurrentHashMap<String, Boolean> tokenBlacklist = new ConcurrentHashMap<>();
 
 
-    // 회원가입 (이메일 인증 없이 진행)
     @Transactional
     public Long signup(UserDTO userDto) {
-        if (userDto.getConfirmPassword() != null && !userDto.getPassword().equals(userDto.getConfirmPassword())) {
+        // 비밀번호 확인 로직 수정 (암호화하기 전에 비교)
+        if (userDto.getConfirmPassword() != null
+                && !userDto.getPassword().equals(userDto.getConfirmPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-
-        // 닉네임 중복 체크 추가
+        // 닉네임 중복 체크
         Optional<User> existingNickname = userRepository.findByNickname(userDto.getNickname());
         if (existingNickname.isPresent()) {
             throw new IllegalStateException("이미 사용 중인 닉네임입니다.");
@@ -43,10 +43,10 @@ public class UserService {
             throw new IllegalStateException("이미 사용 중인 이메일입니다.");
         }
 
-        // 사용자 정보 저장
+        // 사용자 정보 저장 (여기서 비밀번호를 암호화)
         User user = User.builder()
                 .email(userDto.getEmail())
-                .password(passwordEncoder.encode(userDto.getPassword()))
+                .password(passwordEncoder.encode(userDto.getPassword()))  // 암호화
                 .nickname(userDto.getNickname())
                 .profileImage(userDto.getProfileImage())
                 .build();
