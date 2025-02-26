@@ -19,11 +19,11 @@ public class UserController {
     private final UserService userService; // UserService 사용
     private final JwtTokenProvider jwtTokenProvider;
 
-    // 로그인 → JWT 토큰 발급
+    // 로그인 → JWT 토큰 발급 + userId 반환
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody UserDTO userDTO) {
-        Map<String, String> tokenResponse = userService.login(userDTO);
-        return ResponseEntity.ok(tokenResponse);
+    public ResponseEntity<Map<String, Object>> login(@RequestBody UserDTO userDTO) {
+        Map<String, Object> loginResponse = userService.login(userDTO);
+        return ResponseEntity.ok(loginResponse);
     }
 
     // 회원가입 (이메일 인증 없이 진행)
