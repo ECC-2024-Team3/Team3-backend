@@ -23,14 +23,6 @@ public class CommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-
-    // 현재 로그인한 사용자의 ID 가져오기
-    public Long getCurrentUserId(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        return user.getUserId();
-    }
-
     // 특정 게시글 기준으로 댓글 조회하기
     @Transactional(readOnly = true)
     public Page<CommentDTO> getCommentsByPost(Long postId, int page, int size) {
