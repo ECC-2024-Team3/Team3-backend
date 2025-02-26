@@ -36,6 +36,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/signup", "/api/users/login", "/h2-console/**", "/swagger-ui/**").permitAll()
                         .requestMatchers("/api/**").permitAll()
+                        // ✅ 댓글 조회는 인증 없이 접속 가능
+                        .requestMatchers("/api/comments/post/**").permitAll()
+                        .requestMatchers(
+                                // ✅ 댓글 작성, 수정, 삭제, 마이페이지는 토큰 필요
+                                "/api/comments/**",
+                                "/api/mypage/**"           ).authenticated()
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(ex -> ex.accessDeniedPage("/403"))
