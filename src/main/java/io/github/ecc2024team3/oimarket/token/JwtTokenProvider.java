@@ -1,5 +1,7 @@
 package io.github.ecc2024team3.oimarket.token;
 
+import io.github.ecc2024team3.oimarket.entity.User;
+import io.github.ecc2024team3.oimarket.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -27,6 +29,7 @@ public class JwtTokenProvider {
     private final Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 
     private final UserDetailsService userDetailsService;
+    private final UserRepository userRepository;
 
     private final Map<String, Boolean> tokenBlacklist = Collections.synchronizedMap(new HashMap<>());
 
@@ -57,6 +60,21 @@ public class JwtTokenProvider {
                 .getBody()
                 .getSubject();
     }
+
+    public Long getUserIdFromToken(String token) { // ✅ static 제거
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        
+        // JWT에서 email을 기반으로 userId 가져오기
+        String email = claims.getSubject();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("사용자를 찾을 수 없습니다."));
+        
+        return user.getUserId();
+    }    
 
     //  resolveToken() 수정 (static 제거)
     public String resolveToken(HttpServletRequest request) {
