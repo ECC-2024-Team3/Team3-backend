@@ -31,4 +31,18 @@ public class PostCreateDTO {
     private String transactionStatus;
     private String content;
     private List<String> images;
+
+    @Override
+    public String toString() {
+        return "PostCreateDTO{" +
+                "title='" + title + '\'' +
+                ", location='" + location + '\'' +
+                ", price=" + price +
+                ", category='" + category + '\'' +
+                ", itemCondition='" + itemCondition + '\'' +
+                ", transactionStatus='" + transactionStatus + '\'' +
+                ", content='" + content + '\'' +
+                ", images=" + images +
+                '}';
+    }
 }

@@ -37,42 +37,56 @@ public class PostService {
     // ✅ 게시글 생성 (Create)
     @Transactional
     public PostDTO createPost(PostCreateDTO postDTO, Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-    
-        if (postDTO.getTitle() == null || postDTO.getTitle().isBlank()) {
-            throw new IllegalArgumentException("제목을 입력해주세요.");
+        try {
+            System.out.println("📌 createPost 호출됨. userId: " + userId);
+            System.out.println("📌 전달받은 데이터: " + postDTO.toString());
+
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("🚨 사용자를 찾을 수 없습니다. userId: " + userId));
+
+            if (postDTO.getTitle() == null || postDTO.getTitle().isBlank()) {
+                throw new IllegalArgumentException("🚨 제목을 입력해주세요.");
+            }
+            if (postDTO.getLocation() == null || postDTO.getLocation().isBlank()) {
+                throw new IllegalArgumentException("🚨 장소를 입력해주세요.");
+            }
+            if (postDTO.getPrice() == null) {
+                throw new IllegalArgumentException("🚨 가격을 입력해주세요.");
+            }
+            if (postDTO.getCategory() == null) {
+                throw new IllegalArgumentException("🚨 카테고리를 선택해주세요.");
+            }
+            if (postDTO.getItemCondition() == null) {
+                throw new IllegalArgumentException("🚨 제품상태를 선택해주세요.");
+            }
+
+            // ✅ ENUM 변환 시도
+            TransactionStatus status = TransactionStatus.valueOf(postDTO.getTransactionStatus());
+            Category category = Category.valueOf(postDTO.getCategory());
+            ItemCondition itemCondition = ItemCondition.valueOf(postDTO.getItemCondition());
+
+            System.out.println("📌 ENUM 변환 성공: " + status + ", " + category + ", " + itemCondition);
+
+            Post post = new Post(postDTO, user);
+            post.setTransactionStatus(status);
+            post.setCategory(category);
+            post.setItemCondition(itemCondition);
+
+            postRepository.save(post);
+            
+            String representativeImage = (post.getImages() != null && !post.getImages().isEmpty()) 
+                ? post.getImages().get(0).getImageUrl() 
+                : null;
+
+            return new PostDTO(post, representativeImage);
+        } catch (Exception e) {
+            System.err.println("🚨 게시글 생성 중 오류 발생: " + e.getMessage());
+            e.printStackTrace(); // ✅ 로그 출력
+            throw e;
         }
-        if (postDTO.getLocation() == null || postDTO.getLocation().isBlank()) {
-            throw new IllegalArgumentException("장소를 입력해주세요.");
-        }
-        if (postDTO.getPrice() == null) {
-            throw new IllegalArgumentException("가격을 입력해주세요.");
-        }
-        if (postDTO.getCategory() == null) {
-            throw new IllegalArgumentException("카테고리를 선택해주세요.");
-        }
-        if (postDTO.getItemCondition() == null) {
-            throw new IllegalArgumentException("제품상태를 선택해주세요.");
-        }
-    
-        TransactionStatus status = (postDTO.getTransactionStatus() != null)
-                ? TransactionStatus.valueOf(postDTO.getTransactionStatus())
-                : TransactionStatus.ON_SALE;
-    
-        Post post = new Post(postDTO, user);
-        post.setTransactionStatus(status);
-        post.setCategory(Category.valueOf(postDTO.getCategory()));
-        post.setItemCondition(ItemCondition.valueOf(postDTO.getItemCondition()));
-    
-        postRepository.save(post);
-        
-        String representativeImage = (post.getImages() != null && !post.getImages().isEmpty()) 
-            ? post.getImages().get(0).getImageUrl() 
-            : null;
-    
-        return new PostDTO(post, representativeImage);
-    }    
+    }
+
+
 
     // ✅ 전체 게시글 조회 (Read - 모든 게시글)
     @Transactional(readOnly = true)
