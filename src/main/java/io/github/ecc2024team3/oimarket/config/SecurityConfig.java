@@ -42,14 +42,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/posts/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/posts/**/likes").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/posts/**/bookmarks").authenticated()
-                        .anyRequest().authenticated()
-                        .requestMatchers("/api/**").permitAll()
                         // ✅ 댓글 조회는 인증 없이 접속 가능
                         .requestMatchers("/api/comments/post/**").permitAll()
                         .requestMatchers(
                                 // ✅ 댓글 작성, 수정, 삭제, 마이페이지는 토큰 필요
-                                "/api/comments/**",
-                                "/api/mypage/**"           ).authenticated()
+                                "/api/comments/**", "/api/mypage/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(ex -> ex.accessDeniedPage("/403"))
