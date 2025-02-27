@@ -11,9 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+
+@Slf4j
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
+
     private final PostService postService;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -24,10 +29,16 @@ public class PostController {
 
     // ✅ 게시글 생성 (POST /api/posts)
     @PostMapping
-    public ResponseEntity<PostDTO> createPost(@RequestBody @Valid PostCreateDTO postCreateDTO,
-                                              @RequestHeader("Authorization") String token) {
-        Long userId = jwtTokenProvider.getUserIdFromToken(token);
-        return ResponseEntity.ok(postService.createPost(postCreateDTO, userId));
+    public ResponseEntity<?> createPost(@RequestBody @Valid PostCreateDTO postCreateDTO,
+                                        @RequestHeader("Authorization") String token) {
+        try {
+            Long userId = jwtTokenProvider.getUserIdFromToken(token);
+            PostDTO createdPost = postService.createPost(postCreateDTO, userId);
+            return ResponseEntity.ok(createdPost);
+        } catch (Exception e) {
+            log.error("게시글 생성 중 오류 발생: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 생성 중 오류가 발생했습니다.");
+        }
     }
 
 

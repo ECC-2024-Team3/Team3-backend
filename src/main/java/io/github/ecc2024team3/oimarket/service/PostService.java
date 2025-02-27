@@ -59,32 +59,46 @@ public class PostService {
             if (postDTO.getItemCondition() == null) {
                 throw new IllegalArgumentException("🚨 제품상태를 선택해주세요.");
             }
+            if (postDTO.getTransactionStatus() == null) {
+                throw new IllegalArgumentException("🚨 거래 상태를 선택해주세요.");
+            }
 
-            // ✅ ENUM 변환 시도
-            TransactionStatus status = TransactionStatus.valueOf(postDTO.getTransactionStatus());
-            Category category = Category.valueOf(postDTO.getCategory());
-            ItemCondition itemCondition = ItemCondition.valueOf(postDTO.getItemCondition());
-
-            System.out.println("📌 ENUM 변환 성공: " + status + ", " + category + ", " + itemCondition);
-
-            Post post = new Post(postDTO, user);
-            post.setTransactionStatus(status);
-            post.setCategory(category);
-            post.setItemCondition(itemCondition);
-
-            postRepository.save(post);
+            // ✅ ENUM 변환 (대소문자 문제 해결)
+            try {
+                System.out.println("📌 [ENUM 변환 시작] transactionStatus: " + postDTO.getTransactionStatus());
+                TransactionStatus status = TransactionStatus.valueOf(postDTO.getTransactionStatus().toUpperCase());
             
-            String representativeImage = (post.getImages() != null && !post.getImages().isEmpty()) 
-                ? post.getImages().get(0).getImageUrl() 
-                : null;
+                System.out.println("📌 [ENUM 변환 시작] category: " + postDTO.getCategory());
+                Category category = Category.valueOf(postDTO.getCategory().toUpperCase());
+            
+                System.out.println("📌 [ENUM 변환 시작] itemCondition: " + postDTO.getItemCondition());
+                ItemCondition itemCondition = ItemCondition.valueOf(postDTO.getItemCondition());
+            
+                System.out.println("📌 [ENUM 변환 성공]: " + status + ", " + category + ", " + itemCondition);
 
-            return new PostDTO(post, representativeImage);
+                Post post = new Post(postDTO, user);
+                post.setTransactionStatus(status);
+                post.setCategory(category);
+                post.setItemCondition(itemCondition);
+
+                postRepository.save(post);
+
+                String representativeImage = (post.getImages() != null && !post.getImages().isEmpty()) 
+                    ? post.getImages().get(0).getImageUrl() 
+                    : null;
+
+                return new PostDTO(post, representativeImage);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("🚨 잘못된 ENUM 값이 입력되었습니다. category: " + postDTO.getCategory() +
+                        ", itemCondition: " + postDTO.getItemCondition() + ", transactionStatus: " + postDTO.getTransactionStatus());
+            }
         } catch (Exception e) {
             System.err.println("🚨 게시글 생성 중 오류 발생: " + e.getMessage());
             e.printStackTrace(); // ✅ 로그 출력
             throw e;
         }
     }
+
 
 
 
